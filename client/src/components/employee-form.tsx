@@ -2,6 +2,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useEffect } from "react";
 import { useEmployees } from "@/hooks/use-employees";
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
@@ -48,7 +49,15 @@ export default function EmployeeForm({ employee }: Props) {
 
   const form = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeSchema),
-    defaultValues: {
+    defaultValues: employee ? {
+      name: employee.name,
+      employeeId: employee.employeeId,
+      jobRoleId: employee.jobRoleId || 0,
+      department: employee.department,
+      siteId: employee.siteId || 0,
+      isUser: employee.isUser,
+      managerId: employee.managerId,
+    } : {
       name: "",
       employeeId: "",
       jobRoleId: 0,
@@ -56,7 +65,7 @@ export default function EmployeeForm({ employee }: Props) {
       siteId: 0,
       isUser: true,
       managerId: null,
-    },
+    }
   });
 
   useEffect(() => {
