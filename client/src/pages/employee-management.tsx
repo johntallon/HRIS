@@ -71,7 +71,9 @@ export default function EmployeeManagement() {
   }
 
   if (isEmployeeRoute) {
-    return null; // Let the edit route handle the view
+    const id = window.location.pathname.split('/').pop();
+  const employee = employees?.find(e => e.id === Number(id));
+  return <EmployeeForm employee={employee} />;
   }
 
   return (

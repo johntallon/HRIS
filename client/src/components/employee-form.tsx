@@ -58,7 +58,7 @@ export default function EmployeeForm({ onSuccess, employee }: Props) {
   const onSubmit = async (data: z.infer<typeof employeeSchema>) => {
     try {
       if (employee) {
-        await updateEmployee(employee.id, data);
+        await updateEmployee({ id: employee.id, data });
       } else {
         await createEmployee(data);
       }
