@@ -35,7 +35,7 @@ export function registerRoutes(router: Router) {
   router.post("/compensation", async (req, res) => {
     try {
       const data = compensationSchema.parse(req.body);
-      const compensation = await employeeService.createCompensation(data);
+      const compensation = await compensationService.create(data);
       res.json(compensation);
     } catch (error) {
       res.status(500).json({ message: String(error) });
