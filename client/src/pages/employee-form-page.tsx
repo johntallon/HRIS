@@ -5,6 +5,7 @@ import EmployeeForm from "@/components/employee-form";
 import { Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import CompensationForm from "@/components/compensation-form";
 import type { Employee } from "@db/schema";
 
@@ -53,12 +54,20 @@ export default function EmployeeFormPage() {
                   Add Compensation
                 </Button>
               </div>
-              <CompensationForm 
-                employee={employee} 
-                onSuccess={() => setCompensationDialogOpen(false)} 
-                open={compensationDialogOpen} // Pass the state to the CompensationForm
-                onClose={() => setCompensationDialogOpen(false)} //Add onClose handler
-              />
+              <Dialog open={compensationDialogOpen} onOpenChange={setCompensationDialogOpen}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Compensation</DialogTitle>
+                    <DialogDescription>
+                      Add a new compensation record for {employee.name}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <CompensationForm 
+                    employee={employee} 
+                    onSuccess={() => setCompensationDialogOpen(false)}
+                  />
+                </DialogContent>
+              </Dialog>
             </div>
           </TabsContent>
         </Tabs>
