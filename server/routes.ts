@@ -60,8 +60,10 @@ export function registerRoutes(router: Router) {
       if (sort) {
         const [field, order] = (sort as string).split(':');
         if (field && order) {
-          const sortOrder = order === 'asc' ? sql`asc` : sql`desc`;
-          query = query.orderBy(sql`${sql.identifier(field)} ${sortOrder}`);
+          query = query.orderBy((qb) => {
+            const column = employees[field as keyof typeof employees];
+            return order === 'asc' ? asc(column) : desc(column);
+          });
         }
       }
 
