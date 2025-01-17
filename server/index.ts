@@ -8,8 +8,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Logging middleware
+// Logging middleware for API routes
 app.use((req, res, next) => {
+  if (!req.path.startsWith('/api')) {
+    return next();
+  }
+
   const start = Date.now();
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
@@ -22,18 +26,16 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      log(logLine);
+    let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+    if (capturedJsonResponse) {
+      logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
     }
+
+    if (logLine.length > 80) {
+      logLine = logLine.slice(0, 79) + "…";
+    }
+
+    log(logLine);
   });
 
   next();
@@ -42,36 +44,40 @@ app.use((req, res, next) => {
 (async () => {
   const server = createServer(app);
 
-  // Setup authentication
+  // Setup authentication first
   setupAuth(app);
 
-  // Create a router for API routes
+  // Setup API routes
   const apiRouter = express.Router();
-  registerRoutes(apiRouter);
-
-  // Mount API routes at /api
-  app.use("/api", apiRouter);
-
-  // API 404 handler
-  app.use("/api", (_req, res) => {
-    res.status(404).json({ message: "API endpoint not found" });
+  apiRouter.use((_req, res, next) => {
+    res.type('application/json');
+    next();
   });
 
-  // Global error handler
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    console.error(err);
+  registerRoutes(apiRouter);
+  app.use("/api", apiRouter);
+
+  // API error handlers for /api routes only
+  app.use("/api", (err: any, _req: Request, res: Response, _next: NextFunction) => {
+    console.error("API Error:", err);
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     res.status(status).json({ message });
   });
 
-  // Handle frontend routes based on environment
+  // API 404 handler for /api routes
+  app.use("/api/*", (_req: Request, res: Response) => {
+    res.status(404).json({ message: "API endpoint not found" });
+  });
+
+  // Frontend setup
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
+  // Start server
   const PORT = 5000;
   server.listen(PORT, "0.0.0.0", () => {
     log(`Server started on port ${PORT}`);
