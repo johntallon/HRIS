@@ -2,6 +2,8 @@ import { useLocation, useRoute } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import EmployeeForm from "@/components/employee-form";
 import { Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CompensationForm from "@/components/compensation-form";
 import type { Employee } from "@db/schema";
 
 export default function EmployeeFormPage() {
@@ -22,5 +24,25 @@ export default function EmployeeFormPage() {
     );
   }
 
-  return <EmployeeForm employee={employee} />;
+  return (
+    <div className="space-y-4">
+      <h2 className="text-2xl font-bold">
+        {params?.id ? "Edit Employee" : "Add Employee"}
+      </h2>
+      <Tabs defaultValue="details">
+        <TabsList>
+          <TabsTrigger value="details">Details</TabsTrigger>
+          {params?.id && <TabsTrigger value="compensation">Compensation</TabsTrigger>}
+        </TabsList>
+        <TabsContent value="details">
+          <EmployeeForm employee={employee} />
+        </TabsContent>
+        {params?.id && (
+          <TabsContent value="compensation">
+            <CompensationForm employee={employee} onSuccess={() => {}} />
+          </TabsContent>
+        )}
+      </Tabs>
+    </div>
+  );
 }
