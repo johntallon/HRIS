@@ -1,11 +1,14 @@
 import express, { type Request, Response, NextFunction } from "express";
+import { createServer } from "http";
 import { registerRoutes } from "./routes";
+import { setupAuth } from "./auth";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -37,29 +40,40 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const server = registerRoutes(app);
+  const server = createServer(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+  // Setup authentication
+  setupAuth(app);
 
-    res.status(status).json({ message });
-    throw err;
+  // Create a router for API routes
+  const apiRouter = express.Router();
+  registerRoutes(apiRouter);
+
+  // Mount API routes at /api
+  app.use("/api", apiRouter);
+
+  // API 404 handler
+  app.use("/api", (_req, res) => {
+    res.status(404).json({ message: "API endpoint not found" });
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
+  // Global error handler
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    console.error(err);
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    res.status(status).json({ message });
+  });
+
+  // Handle frontend routes based on environment
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client
   const PORT = 5000;
   server.listen(PORT, "0.0.0.0", () => {
-    log(`serving on port ${PORT}`);
+    log(`Server started on port ${PORT}`);
   });
 })();
