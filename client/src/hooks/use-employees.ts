@@ -8,6 +8,8 @@ export function useEmployees() {
 
   const { data: employees, isLoading } = useQuery<Employee[]>({
     queryKey: ['/api/employees'],
+    retry: 1,
+    initialData: []
   });
 
   const createMutation = useMutation({

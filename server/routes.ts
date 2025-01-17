@@ -39,9 +39,10 @@ export function registerRoutes(router: Router) {
   router.get("/employees", async (_req, res) => {
     try {
       const allEmployees = await db.select().from(employees);
-      res.json(allEmployees);
+      res.json(allEmployees || []);
     } catch (error) {
-      res.status(500).json({ message: "Error fetching employees" });
+      console.error('Error fetching employees:', error);
+      res.status(500).json({ message: String(error) });
     }
   });
 
