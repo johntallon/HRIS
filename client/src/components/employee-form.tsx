@@ -223,14 +223,14 @@ export default function EmployeeForm({ employee: initialEmployee }: Props) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Manager</FormLabel>
-            <Select onValueChange={(value) => field.onChange(value ? Number(value) : null)} value={field.value?.toString()}>
+            <Select onValueChange={(value) => field.onChange(value === 'none' ? null : Number(value))} value={field.value?.toString() || 'none'}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a manager" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="">No Manager</SelectItem>
+                <SelectItem value="none">No Manager</SelectItem>
                 {employees?.filter(e => e.id !== id).map((manager) => (
                   <SelectItem key={manager.id} value={manager.id.toString()}>
                     {manager.name} - {manager.jobRole}
