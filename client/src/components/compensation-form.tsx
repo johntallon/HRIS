@@ -75,11 +75,11 @@ export default function CompensationForm({ employee, onSuccess }: Props) {
   });
 
   const onSubmit = (data: z.infer<typeof compensationSchema>) => {
-    const formattedData = {
+    createMutation.mutate({
       ...data,
-      startDate: new Date(data.startDate).toISOString()
-    };
-    createMutation.mutate(formattedData);
+      amount: Number(data.amount),
+      employeeId: Number(data.employeeId)
+    });
   };
 
   return (
