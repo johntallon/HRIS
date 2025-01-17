@@ -133,10 +133,10 @@ export default function EmployeeManagement() {
           if (!open) handleCloseEmployeeDialog();
         }}
       >
-        <DialogContent>
+        <DialogContent aria-describedby="add-employee-desc">
           <DialogHeader>
             <DialogTitle>Add Employee</DialogTitle>
-            <DialogDescription>
+            <DialogDescription id="add-employee-desc">
               Enter the employee details below.
             </DialogDescription>
           </DialogHeader>
@@ -151,10 +151,10 @@ export default function EmployeeManagement() {
             if (!open) handleCloseCompensationDialog();
           }}
         >
-          <DialogContent>
+          <DialogContent aria-describedby="compensation-desc">
             <DialogHeader>
               <DialogTitle>Manage Compensation</DialogTitle>
-              <DialogDescription>
+              <DialogDescription id="compensation-desc">
                 Manage compensation details for {selectedEmployee.name}
               </DialogDescription>
             </DialogHeader>
