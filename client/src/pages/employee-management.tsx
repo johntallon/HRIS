@@ -26,8 +26,18 @@ export default function EmployeeManagement() {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
   const [sort, setSort] = useState("");
-  const { data: employeesData, isLoading } = useQuery(['employees', page, filter, sort], 
-    () => fetch(`/api/employees?page=${page}&filter=${filter}&sort=${sort}`).then(res => res.json())
+  const { data: employeesData, isLoading, error } = useQuery(['employees', page, filter, sort], 
+    async () => {
+      const res = await fetch(`/api/employees?page=${page}&filter=${filter}&sort=${sort}`);
+      if (!res.ok) {
+        throw new Error('Failed to fetch employees');
+      }
+      return res.json();
+    },
+    {
+      retry: 3,
+      initialData: { data: [], totalPages: 1 }
+    }
   );
   const [compensationDialogOpen, setCompensationDialogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
