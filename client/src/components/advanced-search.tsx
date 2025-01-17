@@ -43,7 +43,10 @@ export default function AdvancedSearch({ onFilterChange }: Props) {
   );
 
   const handleFilterChange = (key: keyof SearchFilters, value: string | number | undefined) => {
-    const newFilters = { ...filters, [key]: value };
+    const newFilters = { 
+      ...filters, 
+      [key]: value === "0" ? undefined : value 
+    };
     setFilters(newFilters);
     debouncedFilterChange(newFilters);
   };
@@ -64,14 +67,14 @@ export default function AdvancedSearch({ onFilterChange }: Props) {
         </div>
         <div className="w-[200px]">
           <Select
-            value={filters.jobRoleId?.toString()}
+            value={filters.jobRoleId?.toString() || "0"}
             onValueChange={(value) => handleFilterChange("jobRoleId", value ? parseInt(value) : undefined)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select role" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Roles</SelectItem>
+              <SelectItem value="0">All Roles</SelectItem>
               {jobRoles?.map((role) => (
                 <SelectItem key={role.id} value={role.id.toString()}>
                   {role.name}
@@ -82,14 +85,14 @@ export default function AdvancedSearch({ onFilterChange }: Props) {
         </div>
         <div className="w-[200px]">
           <Select
-            value={filters.siteId?.toString()}
+            value={filters.siteId?.toString() || "0"}
             onValueChange={(value) => handleFilterChange("siteId", value ? parseInt(value) : undefined)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select site" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Sites</SelectItem>
+              <SelectItem value="0">All Sites</SelectItem>
               {sites?.map((site) => (
                 <SelectItem key={site.id} value={site.id.toString()}>
                   {site.name}
