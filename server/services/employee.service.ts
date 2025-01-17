@@ -1,13 +1,21 @@
 import { BaseService } from "./base.service";
 import { employees, type Employee } from "@db/schema";
 import { db } from "@db";
-import { eq, and, ilike, desc, asc, sql } from "drizzle-orm";
+import { eq, and, or, ilike, desc, asc, sql, type SQL } from "drizzle-orm";
+
+type FilterCriteria = {
+  search?: string;
+  department?: string;
+  jobRoleId?: number;
+  siteId?: number;
+  managerId?: number;
+};
 
 type EmployeeQueryParams = {
   page?: number;
   limit?: number;
   sort?: string;
-  filter?: string;
+  filters?: FilterCriteria;
 };
 
 export class EmployeeService extends BaseService<Employee> {
@@ -15,16 +23,42 @@ export class EmployeeService extends BaseService<Employee> {
     super(employees);
   }
 
-  async findEmployees({ page = 1, limit = 10, sort, filter }: EmployeeQueryParams) {
+  async findEmployees({ page = 1, limit = 10, sort, filters }: EmployeeQueryParams) {
     let query = db.select().from(employees);
+    const conditions: SQL[] = [];
 
-    // Apply filter
-    if (filter) {
-      query = query.where(
-        sql`${employees.name} ILIKE ${`%${filter}%`} OR 
-            ${employees.employeeId} ILIKE ${`%${filter}%`} OR 
-            ${employees.department} ILIKE ${`%${filter}%`}`
-      );
+    // Apply filters
+    if (filters) {
+      if (filters.search) {
+        conditions.push(
+          or(
+            ilike(employees.name, `%${filters.search}%`),
+            ilike(employees.employeeId, `%${filters.search}%`),
+            ilike(employees.department, `%${filters.search}%`)
+          )
+        );
+      }
+
+      if (filters.department) {
+        conditions.push(ilike(employees.department, `%${filters.department}%`));
+      }
+
+      if (filters.jobRoleId) {
+        conditions.push(eq(employees.jobRoleId, filters.jobRoleId));
+      }
+
+      if (filters.siteId) {
+        conditions.push(eq(employees.siteId, filters.siteId));
+      }
+
+      if (filters.managerId) {
+        conditions.push(eq(employees.managerId, filters.managerId));
+      }
+    }
+
+    // Apply all conditions
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
     }
 
     // Apply sorting
@@ -42,7 +76,9 @@ export class EmployeeService extends BaseService<Employee> {
     // Get total count for pagination
     const countResult = await db
       .select({ count: sql<number>`count(*)::integer` })
-      .from(employees);
+      .from(employees)
+      .where(and(...conditions));
+
     const total = Number(countResult[0]?.count || 0);
 
     // Apply pagination

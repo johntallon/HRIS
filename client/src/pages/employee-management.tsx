@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Input } from "@/components/ui/input";
+import AdvancedSearch from "@/components/advanced-search";
 import CompensationForm from "@/components/compensation-form";
 import { useLocation } from "wouter";
 import {
@@ -22,18 +22,34 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Plus, Download } from "lucide-react";
 import type { Employee } from "@db/schema";
 
+type SearchFilters = {
+  search?: string;
+  department?: string;
+  jobRoleId?: number;
+  siteId?: number;
+};
+
 export default function EmployeeManagement() {
   const [page, setPage] = useState(1);
-  const [filter, setFilter] = useState("");
   const [sort, setSort] = useState("");
+  const [filters, setFilters] = useState<SearchFilters>({});
   const [compensationDialogOpen, setCompensationDialogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [, setLocation] = useLocation();
 
   const { data: employeesData, isLoading } = useQuery({
-    queryKey: ['/api/employees', { page, filter, sort }],
+    queryKey: ['/api/employees', { page, sort, ...filters }],
     queryFn: async () => {
-      const res = await fetch(`/api/employees?page=${page}&filter=${filter}&sort=${sort}`);
+      const params = new URLSearchParams({
+        page: page.toString(),
+        ...(sort && { sort }),
+        ...(filters.search && { search: filters.search }),
+        ...(filters.department && { department: filters.department }),
+        ...(filters.jobRoleId && { jobRoleId: filters.jobRoleId.toString() }),
+        ...(filters.siteId && { siteId: filters.siteId.toString() }),
+      });
+
+      const res = await fetch(`/api/employees?${params}`);
       if (!res.ok) {
         throw new Error('Failed to fetch employees');
       }
@@ -101,13 +117,9 @@ export default function EmployeeManagement() {
         </div>
       </div>
 
+      <AdvancedSearch onFilterChange={setFilters} />
+
       <div className="space-y-2">
-        <Input
-          placeholder="Filter employees..."
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="max-w-sm"
-        />
         <div className="border rounded-lg">
           <Table>
             <TableHeader>
