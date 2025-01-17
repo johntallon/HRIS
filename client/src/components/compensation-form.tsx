@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 
 const compensationSchema = z.object({
@@ -89,23 +90,34 @@ export default function CompensationForm({ employee, onSuccess }: Props) {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">Compensation History</h3>
-        <div className="mt-2 space-y-2">
-          {compensationHistory?.map((comp) => (
-            <div
-              key={comp.id}
-              className="p-4 border rounded-lg flex justify-between items-center"
-            >
-              <div>
-                <div className="font-medium">{comp.title}</div>
-                <div className="text-sm text-muted-foreground">
-                  {format(new Date(comp.startDate), "MMM d, yyyy")}
-                </div>
-              </div>
-              <div className="font-medium">
-                ${comp.amount.toLocaleString()}
-              </div>
-            </div>
-          ))}
+        <div className="mt-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Start Date</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+                <TableHead>Notes</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {compensationHistory?.map((comp) => (
+                <TableRow key={comp.id}>
+                  <TableCell className="font-medium">{comp.title}</TableCell>
+                  <TableCell>{format(new Date(comp.startDate), "MMM d, yyyy")}</TableCell>
+                  <TableCell className="text-right">${comp.amount.toLocaleString()}</TableCell>
+                  <TableCell>{comp.notes}</TableCell>
+                </TableRow>
+              ))}
+              {(!compensationHistory || compensationHistory.length === 0) && (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center text-muted-foreground">
+                    No compensation records found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
 
