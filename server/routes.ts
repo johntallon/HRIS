@@ -40,10 +40,18 @@ export function registerRoutes(router: Router) {
     try {
       const { page = 1, limit = 10, sort, filter } = req.query;
 
-      let query = db.select()
-        .from(employees)
-        .leftJoin(jobRoles, eq(employees.jobRoleId, jobRoles.id))
-        .leftJoin(sites, eq(employees.siteId, sites.id));
+      let query = db.select({
+        id: employees.id,
+        name: employees.name,
+        employeeId: employees.employeeId,
+        jobRoleId: employees.jobRoleId,
+        department: employees.department,
+        siteId: employees.siteId,
+        managerId: employees.managerId
+      })
+      .from(employees)
+      .leftJoin(jobRoles, eq(employees.jobRoleId, jobRoles.id))
+      .leftJoin(sites, eq(employees.siteId, sites.id));
 
       if (filter) {
         query = query.where(like(employees.name, `%${filter}%`));
