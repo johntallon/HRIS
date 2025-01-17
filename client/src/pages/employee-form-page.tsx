@@ -1,3 +1,4 @@
+
 import { useLocation, useRoute } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import EmployeeForm from "@/components/employee-form";
@@ -25,24 +26,31 @@ export default function EmployeeFormPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 container py-4">
       <h2 className="text-2xl font-bold">
-        {params?.id ? "Edit Employee" : "Add Employee"}
+        {isNewEmployee ? "Add Employee" : `Edit ${employee?.name}`}
       </h2>
-      <Tabs defaultValue="details">
-        <TabsList>
-          <TabsTrigger value="details">Details</TabsTrigger>
-          {params?.id && <TabsTrigger value="compensation">Compensation</TabsTrigger>}
-        </TabsList>
-        <TabsContent value="details">
-          <EmployeeForm employee={employee} />
-        </TabsContent>
-        {params?.id && (
+      
+      {!isNewEmployee && employee && (
+        <Tabs defaultValue="details" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="details">Details</TabsTrigger>
+            <TabsTrigger value="compensation">Compensation History</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="details">
+            <EmployeeForm employee={employee} />
+          </TabsContent>
+          
           <TabsContent value="compensation">
             <CompensationForm employee={employee} onSuccess={() => {}} />
           </TabsContent>
-        )}
-      </Tabs>
+        </Tabs>
+      )}
+      
+      {isNewEmployee && (
+        <EmployeeForm employee={employee} />
+      )}
     </div>
   );
 }
