@@ -44,9 +44,9 @@ export function registerRoutes(router: Router) {
         id: employees.id,
         name: employees.name,
         employeeId: employees.employeeId,
-        jobRole: jobRoles.title,
+        jobRoleId: employees.jobRoleId,
         department: employees.department,
-        site: sites.name,
+        siteId: employees.siteId,
         managerId: employees.managerId
       })
       .from(employees)
@@ -59,7 +59,10 @@ export function registerRoutes(router: Router) {
 
       if (sort) {
         const [field, order] = (sort as string).split(':');
-        query = query.orderBy(desc(field as any));
+        if (field && order) {
+          const sortOrder = order === 'asc' ? sql`asc` : sql`desc`;
+          query = query.orderBy(sql`${sql.identifier(field)} ${sortOrder}`);
+        }
       }
 
       const offset = (Number(page) - 1) * Number(limit);
