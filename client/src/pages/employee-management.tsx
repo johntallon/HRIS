@@ -23,22 +23,26 @@ import type { Employee } from "@db/schema";
 
 export default function EmployeeManagement() {
   const { employees, isLoading } = useEmployees();
-  const [showEmployeeForm, setShowEmployeeForm] = useState<boolean>(false);
-  const [showCompensationForm, setShowCompensationForm] = useState<boolean>(false);
+  const [employeeDialogOpen, setEmployeeDialogOpen] = useState(false);
+  const [compensationDialogOpen, setCompensationDialogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
 
   const handleCompensationClick = (employee: Employee) => {
     setSelectedEmployee(employee);
-    setShowCompensationForm(true);
+    setCompensationDialogOpen(true);
   };
 
-  const handleCloseEmployeeForm = () => {
-    setShowEmployeeForm(false);
+  const handleCloseEmployeeDialog = () => {
+    setEmployeeDialogOpen(false);
   };
 
-  const handleCloseCompensationForm = () => {
-    setShowCompensationForm(false);
+  const handleCloseCompensationDialog = () => {
+    setCompensationDialogOpen(false);
     setSelectedEmployee(null);
+  };
+
+  const handleOpenEmployeeDialog = () => {
+    setEmployeeDialogOpen(true);
   };
 
   const exportToCSV = () => {
@@ -50,7 +54,7 @@ export default function EmployeeManagement() {
       ...employees.map(emp => [
         emp.name,
         emp.employeeId,
-        emp.jobRole,
+        emp.jobRoleId,
         emp.department,
         emp.siteId,
         emp.managerId
@@ -81,7 +85,7 @@ export default function EmployeeManagement() {
             <Download className="h-4 w-4 mr-2" />
             Export CSV
           </Button>
-          <Button onClick={() => setShowEmployeeForm(true)}>
+          <Button onClick={handleOpenEmployeeDialog}>
             <Plus className="h-4 w-4 mr-2" />
             Add Employee
           </Button>
@@ -105,7 +109,7 @@ export default function EmployeeManagement() {
               <TableRow key={employee.id}>
                 <TableCell>{employee.name}</TableCell>
                 <TableCell>{employee.employeeId}</TableCell>
-                <TableCell>{employee.jobRole}</TableCell>
+                <TableCell>{employee.jobRoleId}</TableCell>
                 <TableCell>{employee.department}</TableCell>
                 <TableCell>{employee.siteId}</TableCell>
                 <TableCell>
@@ -123,7 +127,12 @@ export default function EmployeeManagement() {
         </Table>
       </div>
 
-      <Dialog open={showEmployeeForm} onOpenChange={handleCloseEmployeeForm}>
+      <Dialog 
+        open={employeeDialogOpen} 
+        onOpenChange={(open) => {
+          if (!open) handleCloseEmployeeDialog();
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Employee</DialogTitle>
@@ -131,12 +140,17 @@ export default function EmployeeManagement() {
               Enter the employee details below.
             </DialogDescription>
           </DialogHeader>
-          <EmployeeForm onSuccess={handleCloseEmployeeForm} />
+          <EmployeeForm onSuccess={handleCloseEmployeeDialog} />
         </DialogContent>
       </Dialog>
 
       {selectedEmployee && (
-        <Dialog open={showCompensationForm} onOpenChange={handleCloseCompensationForm}>
+        <Dialog 
+          open={compensationDialogOpen} 
+          onOpenChange={(open) => {
+            if (!open) handleCloseCompensationDialog();
+          }}
+        >
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Manage Compensation</DialogTitle>
@@ -146,7 +160,7 @@ export default function EmployeeManagement() {
             </DialogHeader>
             <CompensationForm
               employee={selectedEmployee}
-              onSuccess={handleCloseCompensationForm}
+              onSuccess={handleCloseCompensationDialog}
             />
           </DialogContent>
         </Dialog>

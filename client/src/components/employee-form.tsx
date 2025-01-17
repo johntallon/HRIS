@@ -23,11 +23,11 @@ import {
 const employeeSchema = z.object({
   name: z.string().min(1, "Name is required"),
   employeeId: z.string().min(1, "Employee ID is required"),
-  jobRole: z.string().min(1, "Job role is required"),
+  jobRoleId: z.coerce.number().min(1, "Job role is required"),
   department: z.string().min(1, "Department is required"),
-  siteId: z.number().min(1, "Site is required"),
+  siteId: z.coerce.number().min(1, "Site is required"),
   isUser: z.boolean().default(true),
-  managerId: z.number().nullable(),
+  managerId: z.coerce.number().nullable(),
 });
 
 type Props = {
@@ -42,17 +42,22 @@ export default function EmployeeForm({ onSuccess }: Props) {
     defaultValues: {
       name: "",
       employeeId: "",
-      jobRole: "",
+      jobRoleId: 0,
       department: "",
-      siteId: 1,
+      siteId: 0,
       isUser: true,
       managerId: null,
     },
   });
 
-  const onSubmit = (data: z.infer<typeof employeeSchema>) => {
-    createEmployee(data);
-    onSuccess();
+  const onSubmit = async (data: z.infer<typeof employeeSchema>) => {
+    try {
+      await createEmployee(data);
+      onSuccess();
+      form.reset();
+    } catch (error) {
+      console.error('Failed to create employee:', error);
+    }
   };
 
   return (
@@ -88,24 +93,24 @@ export default function EmployeeForm({ onSuccess }: Props) {
 
         <FormField
           control={form.control}
-          name="jobRole"
+          name="jobRoleId"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Job Role</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value?.toString()}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a job role" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="CEO">CEO</SelectItem>
-                  <SelectItem value="CFO">CFO</SelectItem>
-                  <SelectItem value="HR Director">HR Director</SelectItem>
-                  <SelectItem value="Site Lead">Site Lead</SelectItem>
-                  <SelectItem value="Finance Lead">Finance Lead</SelectItem>
-                  <SelectItem value="Line Manager">Line Manager</SelectItem>
-                  <SelectItem value="Employee">Employee</SelectItem>
+                  <SelectItem value="1">CEO</SelectItem>
+                  <SelectItem value="2">CFO</SelectItem>
+                  <SelectItem value="3">HR Director</SelectItem>
+                  <SelectItem value="4">Site Lead</SelectItem>
+                  <SelectItem value="5">Finance Lead</SelectItem>
+                  <SelectItem value="6">Line Manager</SelectItem>
+                  <SelectItem value="7">Employee</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -133,10 +138,7 @@ export default function EmployeeForm({ onSuccess }: Props) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Site</FormLabel>
-              <Select
-                onValueChange={(value) => field.onChange(parseInt(value))}
-                defaultValue={field.value?.toString()}
-              >
+              <Select onValueChange={field.onChange} value={field.value?.toString()}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a site" />
