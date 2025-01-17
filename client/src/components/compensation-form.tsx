@@ -27,6 +27,7 @@ const compensationSchema = z.object({
 type Props = {
   employee: Employee;
   onSuccess: () => void;
+  existingCompensation?: Compensation;
 };
 
 export default function CompensationForm({ employee, onSuccess }: Props) {
@@ -65,7 +66,10 @@ export default function CompensationForm({ employee, onSuccess }: Props) {
 
   const form = useForm({
     resolver: zodResolver(compensationSchema),
-    defaultValues: {
+    defaultValues: existingCompensation ? {
+      ...existingCompensation,
+      startDate: new Date(existingCompensation.startDate).toISOString().split('T')[0],
+    } : {
       employeeId: employee.id,
       title: "",
       startDate: new Date().toISOString().split('T')[0],

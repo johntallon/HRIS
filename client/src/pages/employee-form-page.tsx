@@ -54,6 +54,7 @@ export default function EmployeeFormPage() {
                   Add Compensation
                 </Button>
               </div>
+              <CompensationHistory employeeId={employee.id} />
               <Dialog open={compensationDialogOpen} onOpenChange={setCompensationDialogOpen}>
                 <DialogContent>
                   <DialogHeader>
