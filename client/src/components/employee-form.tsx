@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useEffect } from "react";
 import { useEmployees } from "@/hooks/use-employees";
 import { useLocation } from "wouter";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Form,
   FormControl,
