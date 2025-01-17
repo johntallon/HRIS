@@ -113,13 +113,25 @@ export default function EmployeeManagement() {
                 <TableCell>{employee.department}</TableCell>
                 <TableCell>{employee.siteId}</TableCell>
                 <TableCell>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleCompensationClick(employee)}
-                  >
-                    Compensation
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedEmployee(employee);
+                        setEmployeeDialogOpen(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleCompensationClick(employee)}
+                    >
+                      Compensation
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

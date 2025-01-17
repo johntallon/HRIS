@@ -67,6 +67,28 @@ export function registerRoutes(router: Router) {
     }
   });
 
+  router.put("/employees/:id", async (req, res) => {
+    try {
+      const [employee] = await db
+        .update(employees)
+        .set(req.body)
+        .where(eq(employees.id, parseInt(req.params.id)))
+        .returning();
+
+      await db.insert(auditLogs).values({
+        userId: 1,
+        action: "UPDATE",
+        entityType: "EMPLOYEE",
+        entityId: employee.id,
+        changes: JSON.stringify(req.body),
+      });
+
+      res.json(employee);
+    } catch (error) {
+      res.status(500).json({ message: "Error updating employee" });
+    }
+  });
+
   // Site routes
   router.get("/sites", async (_req, res) => {
     try {

@@ -32,31 +32,36 @@ const employeeSchema = z.object({
 
 type Props = {
   onSuccess: () => void;
+  employee?: Employee;
 };
 
-export default function EmployeeForm({ onSuccess }: Props) {
-  const { createEmployee } = useEmployees();
+export default function EmployeeForm({ onSuccess, employee }: Props) {
+  const { createEmployee, updateEmployee } = useEmployees();
 
   const form = useForm({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
-      name: "",
-      employeeId: "",
-      jobRoleId: 0,
-      department: "",
-      siteId: 0,
-      isUser: true,
-      managerId: null,
+      name: employee?.name || "",
+      employeeId: employee?.employeeId || "",
+      jobRoleId: employee?.jobRoleId || 0,
+      department: employee?.department || "",
+      siteId: employee?.siteId || 0,
+      isUser: employee?.isUser ?? true,
+      managerId: employee?.managerId || null,
     },
   });
 
   const onSubmit = async (data: z.infer<typeof employeeSchema>) => {
     try {
-      await createEmployee(data);
+      if (employee) {
+        await updateEmployee(employee.id, data);
+      } else {
+        await createEmployee(data);
+      }
       onSuccess();
       form.reset();
     } catch (error) {
-      console.error('Failed to create employee:', error);
+      console.error('Failed to save employee:', error);
     }
   };
 
