@@ -35,6 +35,8 @@ const employeeSchema = z.object({
   managerId: z.coerce.number().nullable(),
 });
 
+type EmployeeFormData = z.infer<typeof employeeSchema>;
+
 type Props = {
   employee?: Employee;
 };
@@ -44,7 +46,7 @@ export default function EmployeeForm({ employee }: Props) {
   const [, setLocation] = useLocation();
   const isEditMode = Boolean(employee);
 
-  const form = useForm({
+  const form = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
       name: "",
@@ -62,16 +64,16 @@ export default function EmployeeForm({ employee }: Props) {
       form.reset({
         name: employee.name,
         employeeId: employee.employeeId,
-        jobRoleId: employee.jobRoleId,
+        jobRoleId: employee.jobRoleId || 0,
         department: employee.department,
-        siteId: employee.siteId,
+        siteId: employee.siteId || 0,
         isUser: employee.isUser,
         managerId: employee.managerId,
       });
     }
   }, [employee, form]);
 
-  const onSubmit = async (data: z.infer<typeof employeeSchema>) => {
+  const onSubmit = async (data: EmployeeFormData) => {
     try {
       if (isEditMode && employee) {
         await updateEmployee({ id: employee.id, data });
@@ -143,7 +145,7 @@ export default function EmployeeForm({ employee }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Job Role</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value?.toString()}>
+                    <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a job role" />
@@ -184,7 +186,7 @@ export default function EmployeeForm({ employee }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Site</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value?.toString()}>
+                    <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a site" />
