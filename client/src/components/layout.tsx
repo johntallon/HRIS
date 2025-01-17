@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
@@ -10,7 +11,6 @@ import {
   Settings as SettingsIcon,
   Menu,
 } from "lucide-react";
-import { useState } from "react";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -22,7 +22,6 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
       <div
         className={`${
           sidebarOpen ? "w-64" : "w-16"
@@ -90,7 +89,6 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="flex-1 overflow-auto">
         <header className="bg-white shadow-sm p-4">
           <div className="flex justify-between items-center">
