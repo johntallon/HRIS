@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useEmployees } from "@/hooks/use-employees";
 import EmployeeForm from "@/components/employee-form";
 import CompensationForm from "@/components/compensation-form";
+import { useLocation, useRoute } from "wouter";
 import {
   Table,
   TableBody,
@@ -23,26 +24,19 @@ import type { Employee } from "@db/schema";
 
 export default function EmployeeManagement() {
   const { employees, isLoading } = useEmployees();
-  const [employeeDialogOpen, setEmployeeDialogOpen] = useState(false);
   const [compensationDialogOpen, setCompensationDialogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [, setLocation] = useLocation();
+  const [isEmployeeRoute] = useRoute("/employees/:id");
 
   const handleCompensationClick = (employee: Employee) => {
     setSelectedEmployee(employee);
     setCompensationDialogOpen(true);
   };
 
-  const handleCloseEmployeeDialog = () => {
-    setEmployeeDialogOpen(false);
-  };
-
   const handleCloseCompensationDialog = () => {
     setCompensationDialogOpen(false);
     setSelectedEmployee(null);
-  };
-
-  const handleOpenEmployeeDialog = () => {
-    setEmployeeDialogOpen(true);
   };
 
   const exportToCSV = () => {
@@ -76,6 +70,10 @@ export default function EmployeeManagement() {
     );
   }
 
+  if (isEmployeeRoute) {
+    return null; // Let the edit route handle the view
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -85,7 +83,7 @@ export default function EmployeeManagement() {
             <Download className="h-4 w-4 mr-2" />
             Export CSV
           </Button>
-          <Button onClick={handleOpenEmployeeDialog}>
+          <Button onClick={() => setLocation("/employees/new")}>
             <Plus className="h-4 w-4 mr-2" />
             Add Employee
           </Button>
@@ -117,10 +115,7 @@ export default function EmployeeManagement() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => {
-                        setSelectedEmployee(employee);
-                        setEmployeeDialogOpen(true);
-                      }}
+                      onClick={() => setLocation(`/employees/${employee.id}`)}
                     >
                       Edit
                     </Button>
@@ -139,23 +134,6 @@ export default function EmployeeManagement() {
         </Table>
       </div>
 
-      <Dialog 
-        open={employeeDialogOpen} 
-        onOpenChange={(open) => {
-          if (!open) handleCloseEmployeeDialog();
-        }}
-      >
-        <DialogContent aria-describedby="add-employee-desc">
-          <DialogHeader>
-            <DialogTitle>Add Employee</DialogTitle>
-            <DialogDescription id="add-employee-desc">
-              Enter the employee details below.
-            </DialogDescription>
-          </DialogHeader>
-          <EmployeeForm onSuccess={handleCloseEmployeeDialog} />
-        </DialogContent>
-      </Dialog>
-
       {selectedEmployee && (
         <Dialog 
           open={compensationDialogOpen} 
@@ -163,10 +141,10 @@ export default function EmployeeManagement() {
             if (!open) handleCloseCompensationDialog();
           }}
         >
-          <DialogContent aria-describedby="compensation-desc">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Manage Compensation</DialogTitle>
-              <DialogDescription id="compensation-desc">
+              <DialogDescription>
                 Manage compensation details for {selectedEmployee.name}
               </DialogDescription>
             </DialogHeader>
