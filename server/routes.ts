@@ -64,7 +64,8 @@ export function registerRoutes(router: Router) {
       }
 
       const offset = (Number(page) - 1) * Number(limit);
-      const countResult = await db.select({ count: sql`count(*)::integer` }).from(employees);
+      const countResult = await db.select({ count: sql<number>`count(*)::integer` }).from(employees);
+      const total = Number(countResult[0]?.count || 0);
 
       const results = await query.limit(Number(limit)).offset(offset);
 
