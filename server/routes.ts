@@ -55,7 +55,7 @@ export function registerRoutes(router: Router) {
 
       if (filter) {
         query = query.where(
-          sql`${employees.name} LIKE ${`%${filter}%`}`
+          sql`CAST(${employees.name} AS text) LIKE ${`%${filter}%`}`
         );
       }
 
