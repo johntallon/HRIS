@@ -1,3 +1,5 @@
+import { db } from "@db";
+
 async getEmployees(page = 1, limit = 10, sort?: string, filter?: string) {
     let query = db.select().from(employees);
 
@@ -24,3 +26,4 @@ async getEmployees(page = 1, limit = 10, sort?: string, filter?: string) {
       totalPages: Math.ceil(total / limit)
     };
   }
+

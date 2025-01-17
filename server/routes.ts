@@ -1,14 +1,20 @@
 import { Router } from "express";
-import { db } from "@db";
-import { employees, compensation, sites, auditLogs, jobRoles } from "@db/schema";
-import { eq, like, desc, sql } from "drizzle-orm";
+import { ServiceFactory } from "./services";
 
 export function registerRoutes(router: Router) {
+  const jobRoleService = ServiceFactory.getJobRoleService();
+  const employeeService = ServiceFactory.getEmployeeService();
+  const siteService = ServiceFactory.getSiteService();
+  const compensationService = ServiceFactory.getCompensationService(); // Added service for compensation
+
+  // Initialize default data
+  ServiceFactory.initializeDefaults().catch(console.error);
+
   // Job Roles routes
   router.get("/job-roles", async (_req, res) => {
     try {
-      const allRoles = await db.select().from(jobRoles);
-      res.json(allRoles);
+      const roles = await jobRoleService.findAll();
+      res.json(roles);
     } catch (error) {
       res.status(500).json({ message: "Error fetching job roles" });
     }
@@ -16,19 +22,7 @@ export function registerRoutes(router: Router) {
 
   router.post("/job-roles", async (req, res) => {
     try {
-      const [role] = await db
-        .insert(jobRoles)
-        .values(req.body)
-        .returning();
-
-      await db.insert(auditLogs).values({
-        userId: 1, // Default system user ID for now
-        action: "CREATE",
-        entityType: "JOB_ROLE",
-        entityId: role.id,
-        changes: JSON.stringify(req.body),
-      });
-
+      const role = await jobRoleService.create(req.body);
       res.json(role);
     } catch (error) {
       res.status(500).json({ message: "Error creating job role" });
@@ -38,41 +32,14 @@ export function registerRoutes(router: Router) {
   // Employee routes
   router.get("/employees", async (req, res) => {
     try {
-      const { page = 1, limit = 10, sort, filter } = req.query;
-
-      let query = db.select({
-        id: employees.id,
-        name: employees.name,
-        employeeId: employees.employeeId,
-        jobRoleId: employees.jobRoleId,
-        department: employees.department,
-        siteId: employees.siteId,
-        managerId: employees.managerId
-      })
-      .from(employees)
-      .leftJoin(jobRoles, eq(employees.jobRoleId, jobRoles.id))
-      .leftJoin(sites, eq(employees.siteId, sites.id));
-
-      if (sort) {
-        const [field, order] = (sort as string).split(':');
-        if (field === 'name' || field === 'employeeId' || field === 'department') {
-          const direction = order === 'asc' ? 'asc' : 'desc';
-          query = query.orderBy(employees[field as keyof typeof employees], direction);
-        }
-      }
-
-      const offset = (Number(page) - 1) * Number(limit);
-      const countResult = await db.select({ count: sql<number>`count(*)::integer` }).from(employees);
-      const total = Number(countResult[0]?.count || 0);
-
-      const results = await query.limit(Number(limit)).offset(offset);
-
-      res.json({
-        data: results,
-        total,
+      const { page, limit, sort, filter } = req.query;
+      const employees = await employeeService.findEmployees({
         page: Number(page),
-        totalPages: Math.ceil(total / Number(limit))
+        limit: Number(limit),
+        sort: sort as string,
+        filter: filter as string,
       });
+      res.json(employees);
     } catch (error) {
       console.error('Error fetching employees:', error);
       res.status(500).json({ message: String(error) });
@@ -81,59 +48,28 @@ export function registerRoutes(router: Router) {
 
   router.get("/employees/:id", async (req, res) => {
     try {
-      const [employee] = await db
-        .select()
-        .from(employees)
-        .where(eq(employees.id, parseInt(req.params.id)));
-
+      const employee = await employeeService.findById(parseInt(req.params.id));
       if (!employee) {
         return res.status(404).json({ message: "Employee not found" });
       }
-
       res.json(employee);
     } catch (error) {
-      console.error('Error fetching employee:', error);
-      res.status(500).json({ message: String(error) });
+      res.status(500).json({ message: "Error fetching employee" });
     }
   });
 
   router.post("/employees", async (req, res) => {
     try {
-      const [employee] = await db
-        .insert(employees)
-        .values(req.body)
-        .returning();
-
-      await db.insert(auditLogs).values({
-        userId: 1, // Default system user ID for now
-        action: "CREATE",
-        entityType: "EMPLOYEE",
-        entityId: employee.id,
-        changes: JSON.stringify(req.body),
-      });
-
+      const employee = await employeeService.createEmployee(req.body);
       res.json(employee);
     } catch (error) {
-      res.status(500).json({ message: "Error creating employee" });
+      res.status(500).json({ message: String(error) });
     }
   });
 
   router.put("/employees/:id", async (req, res) => {
     try {
-      const [employee] = await db
-        .update(employees)
-        .set(req.body)
-        .where(eq(employees.id, parseInt(req.params.id)))
-        .returning();
-
-      await db.insert(auditLogs).values({
-        userId: 1,
-        action: "UPDATE",
-        entityType: "EMPLOYEE",
-        entityId: employee.id,
-        changes: JSON.stringify(req.body),
-      });
-
+      const employee = await employeeService.update(parseInt(req.params.id), req.body);
       res.json(employee);
     } catch (error) {
       res.status(500).json({ message: "Error updating employee" });
@@ -143,8 +79,8 @@ export function registerRoutes(router: Router) {
   // Site routes
   router.get("/sites", async (_req, res) => {
     try {
-      const allSites = await db.select().from(sites);
-      res.json(allSites);
+      const sites = await siteService.findAll();
+      res.json(sites);
     } catch (error) {
       res.status(500).json({ message: "Error fetching sites" });
     }
@@ -153,11 +89,8 @@ export function registerRoutes(router: Router) {
   // Compensation routes
   router.get("/compensation/:employeeId", async (req, res) => {
     try {
-      const employeeCompensation = await db
-        .select()
-        .from(compensation)
-        .where(eq(compensation.employeeId, parseInt(req.params.employeeId)));
-      res.json(employeeCompensation);
+      const compensation = await compensationService.findByEmployeeId(parseInt(req.params.employeeId));
+      res.json(compensation);
     } catch (error) {
       res.status(500).json({ message: "Error fetching compensation" });
     }
@@ -165,24 +98,13 @@ export function registerRoutes(router: Router) {
 
   router.post("/compensation", async (req, res) => {
     try {
-      const [comp] = await db
-        .insert(compensation)
-        .values(req.body)
-        .returning();
-
-      await db.insert(auditLogs).values({
-        userId: 1, // Default system user ID for now
-        action: "CREATE",
-        entityType: "COMPENSATION",
-        entityId: comp.id,
-        changes: JSON.stringify(req.body),
-      });
-
-      res.json(comp);
+      const compensation = await compensationService.create(req.body);
+      res.json(compensation);
     } catch (error) {
       res.status(500).json({ message: "Error creating compensation record" });
     }
   });
+
 
   // Health check endpoint
   router.get("/health", (_req, res) => {

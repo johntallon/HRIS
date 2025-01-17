@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
-import { useEmployees } from "@/hooks/use-employees";
-import EmployeeForm from "@/components/employee-form";
 import CompensationForm from "@/components/compensation-form";
-import { Input } from "@/components/ui/input";
-import { useLocation, useRoute } from "wouter";
+import { useLocation } from "wouter";
 import {
   Table,
   TableBody,
@@ -29,8 +26,12 @@ export default function EmployeeManagement() {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
   const [sort, setSort] = useState("");
-  const { data: employeesData, isLoading, error } = useQuery({
-    queryKey: ['employees', page, filter, sort],
+  const [compensationDialogOpen, setCompensationDialogOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [, setLocation] = useLocation();
+
+  const { data: employeesData, isLoading } = useQuery({
+    queryKey: ['/api/employees', { page, filter, sort }],
     queryFn: async () => {
       const res = await fetch(`/api/employees?page=${page}&filter=${filter}&sort=${sort}`);
       if (!res.ok) {
@@ -38,13 +39,7 @@ export default function EmployeeManagement() {
       }
       return res.json();
     },
-    retry: 3,
-    initialData: { data: [], totalPages: 1 }
   });
-  const [compensationDialogOpen, setCompensationDialogOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-  const [, setLocation] = useLocation();
-  const [isEmployeeRoute] = useRoute("/employees/:id");
 
   const employees = employeesData?.data || [];
   const totalPages = employeesData?.totalPages || 1;
@@ -65,7 +60,7 @@ export default function EmployeeManagement() {
     const headers = ["Name", "Employee ID", "Job Role", "Department", "Site", "Manager"];
     const csvContent = [
       headers.join(","),
-      ...employees.map(emp => [
+      ...employees.map((emp: Employee) => [
         emp.name,
         emp.employeeId,
         emp.jobRoleId,
@@ -90,12 +85,6 @@ export default function EmployeeManagement() {
     );
   }
 
-  if (isEmployeeRoute) {
-    const id = window.location.pathname.split('/').pop();
-    const employee = employees?.find(e => e.id === Number(id));
-    return <EmployeeForm employee={employee} />;
-  }
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -113,7 +102,6 @@ export default function EmployeeManagement() {
       </div>
 
       <div className="space-y-2">
-        {/* Input component is missing from the original code, assuming its inclusion */}
         <Input
           placeholder="Filter employees..."
           value={filter}
@@ -139,7 +127,7 @@ export default function EmployeeManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {employees?.map((employee) => (
+              {employees.map((employee: Employee) => (
                 <TableRow key={employee.id}>
                   <TableCell>{employee.name}</TableCell>
                   <TableCell>{employee.employeeId}</TableCell>
