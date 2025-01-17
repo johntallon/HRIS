@@ -55,8 +55,10 @@ export function registerRoutes(router: Router) {
 
       if (sort) {
         const [field, order] = (sort as string).split(':');
-        const direction = order === 'asc' ? 'ASC' : 'DESC';
-        query = query.orderBy(sql`${sql.identifier(field)} ${sql.raw(direction)}`);
+        if (field === 'name' || field === 'employeeId' || field === 'department') {
+          const direction = order === 'asc' ? 'asc' : 'desc';
+          query = query.orderBy(employees[field as keyof typeof employees], direction);
+        }
       }
 
       const offset = (Number(page) - 1) * Number(limit);
