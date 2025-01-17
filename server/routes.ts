@@ -53,10 +53,6 @@ export function registerRoutes(router: Router) {
       .leftJoin(jobRoles, eq(employees.jobRoleId, jobRoles.id))
       .leftJoin(sites, eq(employees.siteId, sites.id));
 
-      if (filter) {
-        query = query.where(like(employees.name, `%${filter}%`));
-      }
-
       if (sort) {
         const [field, order] = (sort as string).split(':');
         const direction = order === 'asc' ? 'ASC' : 'DESC';
