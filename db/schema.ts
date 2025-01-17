@@ -2,6 +2,15 @@ import { pgTable, text, serial, integer, boolean, timestamp, foreignKey } from "
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Job Roles table
+export const jobRoles = pgTable("job_roles", {
+  id: serial("id").primaryKey(),
+  name: text("name").unique().notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // User management tables
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -25,7 +34,7 @@ export const employees = pgTable("employees", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   employeeId: text("employee_id").unique().notNull(),
-  jobRole: text("job_role").notNull(),
+  jobRoleId: integer("job_role_id").references(() => jobRoles.id),
   siteId: integer("site_id").references(() => sites.id),
   department: text("department").notNull(),
   isUser: boolean("is_user").default(true),
@@ -65,6 +74,9 @@ export const selectEmployeeSchema = createSelectSchema(employees);
 export const insertCompensationSchema = createInsertSchema(compensation);
 export const selectCompensationSchema = createSelectSchema(compensation);
 
+export const insertJobRoleSchema = createInsertSchema(jobRoles);
+export const selectJobRoleSchema = createSelectSchema(jobRoles);
+
 // Types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -77,3 +89,6 @@ export type NewCompensation = typeof compensation.$inferInsert;
 
 export type Site = typeof sites.$inferSelect;
 export type NewSite = typeof sites.$inferInsert;
+
+export type JobRole = typeof jobRoles.$inferSelect;
+export type NewJobRole = typeof jobRoles.$inferInsert;

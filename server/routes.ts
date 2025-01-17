@@ -1,9 +1,40 @@
 import { Router } from "express";
 import { db } from "@db";
-import { employees, compensation, sites, auditLogs } from "@db/schema";
+import { employees, compensation, sites, auditLogs, jobRoles } from "@db/schema";
 import { eq } from "drizzle-orm";
 
 export function registerRoutes(router: Router) {
+  // Job Roles routes
+  router.get("/job-roles", async (_req, res) => {
+    try {
+      const allRoles = await db.select().from(jobRoles);
+      res.json(allRoles);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching job roles" });
+    }
+  });
+
+  router.post("/job-roles", async (req, res) => {
+    try {
+      const [role] = await db
+        .insert(jobRoles)
+        .values(req.body)
+        .returning();
+
+      await db.insert(auditLogs).values({
+        userId: 1, // Default system user ID for now
+        action: "CREATE",
+        entityType: "JOB_ROLE",
+        entityId: role.id,
+        changes: JSON.stringify(req.body),
+      });
+
+      res.json(role);
+    } catch (error) {
+      res.status(500).json({ message: "Error creating job role" });
+    }
+  });
+
   // Employee routes
   router.get("/employees", async (_req, res) => {
     try {

@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Dashboard from "@/pages/dashboard";
 import EmployeeManagement from "@/pages/employee-management";
 import OrgChart from "@/pages/org-chart";
+import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/layout";
 
@@ -15,6 +16,7 @@ function Router() {
         <Route path="/" component={Dashboard} />
         <Route path="/employees" component={EmployeeManagement} />
         <Route path="/org-chart" component={OrgChart} />
+        <Route path="/settings" component={Settings} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   NetworkIcon,
   LogOut,
+  Settings as SettingsIcon,
   Menu,
 } from "lucide-react";
 import { useState } from "react";
@@ -64,6 +65,15 @@ export default function Layout({ children }: LayoutProps) {
             >
               <NetworkIcon className="h-4 w-4 mr-2" />
               {sidebarOpen && "Org Chart"}
+            </Button>
+          </Link>
+          <Link href="/settings">
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+            >
+              <SettingsIcon className="h-4 w-4 mr-2" />
+              {sidebarOpen && "Settings"}
             </Button>
           </Link>
         </nav>
