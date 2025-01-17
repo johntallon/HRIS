@@ -1,0 +1,97 @@
+Business Problem Context
+=====================================================
+
+There are various HR systems in place across SteriPack Manufacturing & Design. This creates pain points and data gaps when managing basic HR processes (e.g., employee compensation and bonus), leading to teams having to manually consolidate and manipulate information in Excel from multiple sources and systems. This is not only time-consuming, but also raises issues around data privacy and integrity.
+
+There is a need to quickly address these issues, by having one robust HRIS (HR Information System) and process in place by the end of the year, which will serve as a source of truth and enable the efficient management of basic HR processes for all group employees.
+
+Solution Scope
+=====================================================
+
+The project aims to consolidate HR information into one system, including employee personal information and compensation details (e.g., bonuses) and enable stakeholders including HR Directors, Finance Directors, line / site managers, and employees to view and manage information easily.
+
+This solution is not intended to replace existing local HR systems or manage direct labour tasks like shift scheduling.
+
+While the solution will need to grow in terms of functionality, and eventually replace parts of existing systems, to its important the system as a good extensibility model. 
+
+
+Solution Requirements
+=======================================================
+
+1) Management of Job Roles - The system will have Job Roles that can be managed. 
+The following are the default Job roles:
+-CEO
+-CFO
+-HR Director
+-Site Lead
+-Finance Lead
+-Line Manager
+-Employee
+
+
+2) Management of Sites (or locations). The system will have Site or Locations that can be managed. 
+The following are the default sites:
+-Poland
+-Malaysia
+-Florida
+-Bristol
+
+3) Management of Permission - System will allow for the management of Permission. 
+The following are the default permissions:
+-System Administrator
+-View and Edit All Salary, bonus, bonus targets
+-View Only (View Only of All Employees Salary, bonus, bonus targets)
+-Personal Only (View own Salary, bonus, bonus targets)
+
+3) Management of Users - System will allow for the management of Users. Default User is System Admin who will have access to everything. When users are created, the default permission will be "Personal Only"
+
+4) Management of Employees - System will allow for the management of Employees. The following fields will be captured: 
+- Employee name 
+- Employee Id
+- Job role
+- Site
+- Department
+- Is A User
+- Manager
+
+Each employee with have Additional employee diversity information that can be added. Almost all Employees will be users, but there will be exceptions.  
+
+On the Employee management screen the following functionality will be available:
+- Admins will be allowed to download a CSV file to complete and then upload for bulk employee inserts.  
+- Admins will be allowed to import from Azure Active Directory EntraID.
+
+Core HR Module features
+===============================================
+The system will have a Core HR module which allows the management of employees, employee personal data and the org chart. 
+The Org Chart the is generated from the Employee table, using the Manager field to build the hierarchy.  
+Admin Users will be able to view the org chart and all reporting lines. Each employee card will be click able and will open the employee details screen. 
+Users will be able to view their employee personal information. 
+
+Here are some permission rules:
+If an employee is a CEO or CFO or HR Director they will be able to view all information on every employee. 
+If an employee is a Site Lead or Finance Lead they will be able to view all information on every employee in that Site.
+If an employee is a Site Lead or Finance Lead they will be able to view all information on every employee in that Site.
+If an employee is a Line Manager they will be able to view all information on that reports to them.
+If an employee is a Employee they will be able to view only their information.
+
+
+Compensation and benefits Module features
+===============================================
+The Compensation and benefits Module added a tab to the Employee Details page called compensation information. That show the compensation information, current and historic, for the employee. This will allow Administrators add and edit and view Compensation and benefits. Each Compensation and benefit has a title, start date, amount and notes field. 
+
+This includes the ability to set bonus targets.
+
+
+TECHNICAL REQUIREMENTS:
+=======================
+
+System must be secure and adhere to OWASP top 10. 
+System must have a mobile responsive UI. 
+UI must use the Microsoft Fluent UI Look and Feel
+All Grids must all for exporting to excel
+The Navigation is on the left and collapsible
+Transition between pages will be very smooth.
+There will be a backend where the business logic.
+The frontend will use react. 
+Add changes to employee and compensation records are change tracked and have an audit trail. 
+ 
