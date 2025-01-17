@@ -67,9 +67,9 @@ export function registerRoutes(router: Router) {
 
       res.json({
         data: results,
-        total: countResult.count,
+        total,
         page: Number(page),
-        totalPages: Math.ceil(countResult.count / Number(limit))
+        totalPages: Math.ceil(total / Number(limit))
       });
     } catch (error) {
       console.error('Error fetching employees:', error);
