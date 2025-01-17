@@ -80,8 +80,8 @@ export default function EmployeeManagement() {
 
   if (isEmployeeRoute) {
     const id = window.location.pathname.split('/').pop();
-  const employee = employees?.find(e => e.id === Number(id));
-  return <EmployeeForm employee={employee} />;
+    const employee = employees?.find(e => e.id === Number(id));
+    return <EmployeeForm employee={employee} />;
   }
 
   return (
@@ -101,6 +101,7 @@ export default function EmployeeManagement() {
       </div>
 
       <div className="space-y-2">
+        {/* Input component is missing from the original code, assuming its inclusion */}
         <Input
           placeholder="Filter employees..."
           value={filter}
@@ -125,80 +126,81 @@ export default function EmployeeManagement() {
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
-          <TableBody>
-            {employees?.map((employee) => (
-              <TableRow key={employee.id}>
-                <TableCell>{employee.name}</TableCell>
-                <TableCell>{employee.employeeId}</TableCell>
-                <TableCell>{employee.jobRoleId}</TableCell>
-                <TableCell>{employee.department}</TableCell>
-                <TableCell>{employee.siteId}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setLocation(`/employees/${employee.id}`)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleCompensationClick(employee)}
-                    >
-                      Compensation
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setPage(page - 1)}
-          disabled={page === 1}
-        >
-          Previous
-        </Button>
-        <div className="text-sm text-muted-foreground">
-          Page {page} of {totalPages}
+            <TableBody>
+              {employees?.map((employee) => (
+                <TableRow key={employee.id}>
+                  <TableCell>{employee.name}</TableCell>
+                  <TableCell>{employee.employeeId}</TableCell>
+                  <TableCell>{employee.jobRoleId}</TableCell>
+                  <TableCell>{employee.department}</TableCell>
+                  <TableCell>{employee.siteId}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setLocation(`/employees/${employee.id}`)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleCompensationClick(employee)}
+                      >
+                        Compensation
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setPage(page + 1)}
-          disabled={page === totalPages}
-        >
-          Next
-        </Button>
-      </div>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(page - 1)}
+            disabled={page === 1}
+          >
+            Previous
+          </Button>
+          <div className="text-sm text-muted-foreground">
+            Page {page} of {totalPages}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(page + 1)}
+            disabled={page === totalPages}
+          >
+            Next
+          </Button>
+        </div>
 
-      {selectedEmployee && (
-        <Dialog 
-          open={compensationDialogOpen} 
-          onOpenChange={(open) => {
-            if (!open) handleCloseCompensationDialog();
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Manage Compensation</DialogTitle>
-              <DialogDescription>
-                Manage compensation details for {selectedEmployee.name}
-              </DialogDescription>
-            </DialogHeader>
-            <CompensationForm
-              employee={selectedEmployee}
-              onSuccess={handleCloseCompensationDialog}
-            />
-          </DialogContent>
-        </Dialog>
-      )}
+        {selectedEmployee && (
+          <Dialog 
+            open={compensationDialogOpen} 
+            onOpenChange={(open) => {
+              if (!open) handleCloseCompensationDialog();
+            }}
+          >
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Manage Compensation</DialogTitle>
+                <DialogDescription>
+                  Manage compensation details for {selectedEmployee.name}
+                </DialogDescription>
+              </DialogHeader>
+              <CompensationForm
+                employee={selectedEmployee}
+                onSuccess={handleCloseCompensationDialog}
+              />
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
     </div>
   );
 }
