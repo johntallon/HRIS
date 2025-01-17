@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import EmployeeForm from "@/components/employee-form";
 import { Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import CompensationForm from "@/components/compensation-form";
 import type { Employee } from "@db/schema";
 
