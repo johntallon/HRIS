@@ -1,4 +1,4 @@
-
+import { useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import EmployeeForm from "@/components/employee-form";
@@ -12,6 +12,8 @@ export default function EmployeeFormPage() {
   const [, params] = useRoute("/employees/:id");
   const [, setLocation] = useLocation();
   const isNewEmployee = params?.id === "new";
+
+  const [compensationDialogOpen, setCompensationDialogOpen] = useState(false); // Added state
 
   const { data: employee, isLoading } = useQuery<Employee>({
     queryKey: [`/api/employees/${params?.id}`],
@@ -31,18 +33,18 @@ export default function EmployeeFormPage() {
       <h2 className="text-2xl font-bold">
         {isNewEmployee ? "Add Employee" : `Edit ${employee?.name}`}
       </h2>
-      
+
       {!isNewEmployee && employee && (
         <Tabs defaultValue="details" className="space-y-4">
           <TabsList>
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="compensation">Compensation</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="details">
             <EmployeeForm employee={employee} />
           </TabsContent>
-          
+
           <TabsContent value="compensation">
             <div className="space-y-6">
               <div className="flex justify-between items-center">
@@ -54,12 +56,14 @@ export default function EmployeeFormPage() {
               <CompensationForm 
                 employee={employee} 
                 onSuccess={() => setCompensationDialogOpen(false)} 
+                open={compensationDialogOpen} // Pass the state to the CompensationForm
+                onClose={() => setCompensationDialogOpen(false)} //Add onClose handler
               />
             </div>
           </TabsContent>
         </Tabs>
       )}
-      
+
       {isNewEmployee && (
         <EmployeeForm employee={employee} />
       )}
