@@ -45,13 +45,13 @@ export default function EmployeeForm({ onSuccess, employee }: Props) {
   const form = useForm({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
-      name: employee?.name || "",
-      employeeId: employee?.employeeId || "",
-      jobRoleId: employee?.jobRoleId || 0,
-      department: employee?.department || "",
-      siteId: employee?.siteId || 0,
-      isUser: employee?.isUser ?? true,
-      managerId: employee?.managerId || null,
+      name: "",
+      employeeId: "",
+      jobRoleId: 0,
+      department: "",
+      siteId: 0,
+      isUser: true,
+      managerId: null,
     },
   });
 
