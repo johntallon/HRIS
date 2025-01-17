@@ -21,6 +21,7 @@ const compensationSchema = z.object({
 export function registerRoutes(router: Router) {
   const employeeService = ServiceFactory.getEmployeeService();
   const compensationService = ServiceFactory.getCompensationService();
+  const jobRoleService = ServiceFactory.getJobRoleService(); // Added JobRoleService
 
   // Compensation routes
   router.get("/compensation/:employeeId", async (req, res) => {
@@ -42,7 +43,7 @@ export function registerRoutes(router: Router) {
     }
   });
 
-  // Employee routes with advanced filtering
+  // Employee routes with advanced filtering and job role name
   router.get("/employees", async (req, res) => {
     try {
       const page = Number(req.query.page) || 1;
@@ -67,7 +68,13 @@ export function registerRoutes(router: Router) {
         filters,
       });
 
-      res.json(employees);
+      // Fetch job role names and add them to the employee objects.
+      const employeesWithJobRoleNames = await Promise.all(employees.map(async (employee) => {
+        const jobRole = await jobRoleService.findById(employee.jobRoleId);
+        return { ...employee, jobRoleName: jobRole ? jobRole.name : null };
+      }));
+
+      res.json(employeesWithJobRoleNames);
     } catch (error) {
       console.error('Error fetching employees:', error);
       res.status(500).json({ message: String(error) });
@@ -104,6 +111,16 @@ export function registerRoutes(router: Router) {
     }
   });
 
+
+  // Job Roles endpoint
+  router.get("/job-roles", async (req, res) => {
+    try {
+      const roles = await jobRoleService.findAll();
+      res.json(roles);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching job roles" });
+    }
+  });
 
   // Health check endpoint
   router.get("/health", (_req, res) => {

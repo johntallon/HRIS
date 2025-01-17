@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, Plus, Download } from "lucide-react";
-import type { Employee } from "@db/schema";
+import type { Employee, JobRole } from "@db/schema";
 
 type SearchFilters = {
   search?: string;
@@ -36,6 +36,10 @@ export default function EmployeeManagement() {
   const [compensationDialogOpen, setCompensationDialogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [, setLocation] = useLocation();
+
+  const { data: jobRoles } = useQuery<JobRole[]>({
+    queryKey: ['/api/job-roles'],
+  });
 
   const { data: employeesData, isLoading } = useQuery({
     queryKey: ['/api/employees', { page, sort, ...filters }],
@@ -143,7 +147,9 @@ export default function EmployeeManagement() {
                 <TableRow key={employee.id}>
                   <TableCell>{employee.name}</TableCell>
                   <TableCell>{employee.employeeId}</TableCell>
-                  <TableCell>{employee.jobRoleId}</TableCell>
+                  <TableCell>
+                    {jobRoles?.find(role => role.id === employee.jobRoleId)?.name || 'Unknown'}
+                  </TableCell>
                   <TableCell>{employee.department}</TableCell>
                   <TableCell>{employee.siteId}</TableCell>
                   <TableCell>
