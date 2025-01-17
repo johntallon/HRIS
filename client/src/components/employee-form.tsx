@@ -1,8 +1,10 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEmployees } from "@/hooks/use-employees";
 import { useLocation } from "wouter";
+import { useState, useEffect } from "react";
 import {
   Form,
   FormControl,
@@ -21,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState, useEffect } from "react"; // Added import
+import type { Employee } from "@db/schema";
 
 const employeeSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -34,13 +36,13 @@ const employeeSchema = z.object({
 });
 
 type Props = {
-  onSuccess?: () => void;
   employee?: Employee;
 };
 
-export default function EmployeeForm({ onSuccess, employee }: Props) {
+export default function EmployeeForm({ employee }: Props) {
   const { createEmployee, updateEmployee } = useEmployees();
   const [, setLocation] = useLocation();
+  const isEditMode = Boolean(employee);
 
   const form = useForm({
     resolver: zodResolver(employeeSchema),
@@ -55,7 +57,6 @@ export default function EmployeeForm({ onSuccess, employee }: Props) {
     },
   });
 
-  // Reset form when employee data changes
   useEffect(() => {
     if (employee) {
       form.reset({
@@ -72,13 +73,10 @@ export default function EmployeeForm({ onSuccess, employee }: Props) {
 
   const onSubmit = async (data: z.infer<typeof employeeSchema>) => {
     try {
-      if (employee) {
+      if (isEditMode && employee) {
         await updateEmployee({ id: employee.id, data });
       } else {
         await createEmployee(data);
-      }
-      if (onSuccess) {
-        onSuccess();
       }
       setLocation("/employees");
     } catch (error) {
@@ -90,7 +88,7 @@ export default function EmployeeForm({ onSuccess, employee }: Props) {
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">
-          {employee ? 'Edit Employee' : 'Add Employee'}
+          {isEditMode ? 'Edit Employee' : 'Add Employee'}
         </h1>
         <Button variant="outline" onClick={() => setLocation("/employees")}>
           Back to List
@@ -215,7 +213,7 @@ export default function EmployeeForm({ onSuccess, employee }: Props) {
               Cancel
             </Button>
             <Button type="submit">
-              {employee ? 'Update Employee' : 'Create Employee'}
+              {isEditMode ? 'Update Employee' : 'Create Employee'}
             </Button>
           </div>
         </form>
