@@ -13,6 +13,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -22,13 +23,22 @@ import type { Employee } from "@db/schema";
 
 export default function EmployeeManagement() {
   const { employees, isLoading } = useEmployees();
-  const [showEmployeeForm, setShowEmployeeForm] = useState(false);
-  const [showCompensationForm, setShowCompensationForm] = useState(false);
+  const [showEmployeeForm, setShowEmployeeForm] = useState<boolean>(false);
+  const [showCompensationForm, setShowCompensationForm] = useState<boolean>(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
 
   const handleCompensationClick = (employee: Employee) => {
     setSelectedEmployee(employee);
     setShowCompensationForm(true);
+  };
+
+  const handleCloseEmployeeForm = () => {
+    setShowEmployeeForm(false);
+  };
+
+  const handleCloseCompensationForm = () => {
+    setShowCompensationForm(false);
+    setSelectedEmployee(null);
   };
 
   const exportToCSV = () => {
@@ -113,26 +123,34 @@ export default function EmployeeManagement() {
         </Table>
       </div>
 
-      <Dialog open={showEmployeeForm} onOpenChange={setShowEmployeeForm}>
+      <Dialog open={showEmployeeForm} onOpenChange={handleCloseEmployeeForm}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Employee</DialogTitle>
+            <DialogDescription>
+              Enter the employee details below.
+            </DialogDescription>
           </DialogHeader>
-          <EmployeeForm onSuccess={() => setShowEmployeeForm(false)} />
+          <EmployeeForm onSuccess={handleCloseEmployeeForm} />
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showCompensationForm} onOpenChange={setShowCompensationForm}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Manage Compensation</DialogTitle>
-          </DialogHeader>
-          <CompensationForm
-            employee={selectedEmployee!}
-            onSuccess={() => setShowCompensationForm(false)}
-          />
-        </DialogContent>
-      </Dialog>
+      {selectedEmployee && (
+        <Dialog open={showCompensationForm} onOpenChange={handleCloseCompensationForm}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Manage Compensation</DialogTitle>
+              <DialogDescription>
+                Manage compensation details for {selectedEmployee.name}
+              </DialogDescription>
+            </DialogHeader>
+            <CompensationForm
+              employee={selectedEmployee}
+              onSuccess={handleCloseCompensationForm}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
