@@ -1,5 +1,9 @@
 import { db } from "@db";
 
+async createCompensation(data: any) {
+  return db.insert(compensation).values(data);
+}
+
 async getEmployees(page = 1, limit = 10, sort?: string, filter?: string) {
     let query = db.select().from(employees);
 

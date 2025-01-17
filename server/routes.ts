@@ -10,14 +10,37 @@ const employeeFilterSchema = z.object({
   managerId: z.coerce.number().optional(),
 });
 
+const compensationSchema = z.object({
+  employeeId: z.number(),
+  title: z.string(),
+  startDate: z.string(),
+  amount: z.number(),
+  notes: z.string().optional()
+});
+
 export function registerRoutes(router: Router) {
-  const jobRoleService = ServiceFactory.getJobRoleService();
   const employeeService = ServiceFactory.getEmployeeService();
-  const siteService = ServiceFactory.getSiteService();
   const compensationService = ServiceFactory.getCompensationService();
 
-  // Initialize default data
-  ServiceFactory.initializeDefaults().catch(console.error);
+  // Compensation routes
+  router.get("/compensation/:employeeId", async (req, res) => {
+    try {
+      const compensation = await compensationService.findByEmployeeId(parseInt(req.params.employeeId));
+      res.json(compensation);
+    } catch (error) {
+      res.status(500).json({ message: String(error) });
+    }
+  });
+
+  router.post("/compensation", async (req, res) => {
+    try {
+      const data = compensationSchema.parse(req.body);
+      const compensation = await employeeService.createCompensation(data);
+      res.json(compensation);
+    } catch (error) {
+      res.status(500).json({ message: String(error) });
+    }
+  });
 
   // Employee routes with advanced filtering
   router.get("/employees", async (req, res) => {
@@ -81,53 +104,6 @@ export function registerRoutes(router: Router) {
     }
   });
 
-  // Site routes
-  router.get("/sites", async (_req, res) => {
-    try {
-      const sites = await siteService.findAll();
-      res.json(sites);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching sites" });
-    }
-  });
-
-  // Job Roles routes
-  router.get("/job-roles", async (_req, res) => {
-    try {
-      const roles = await jobRoleService.findAll();
-      res.json(roles);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching job roles" });
-    }
-  });
-
-  router.post("/job-roles", async (req, res) => {
-    try {
-      const role = await jobRoleService.create(req.body);
-      res.json(role);
-    } catch (error) {
-      res.status(500).json({ message: "Error creating job role" });
-    }
-  });
-
-  // Compensation routes
-  router.get("/compensation/:employeeId", async (req, res) => {
-    try {
-      const compensation = await compensationService.findByEmployeeId(parseInt(req.params.employeeId));
-      res.json(compensation);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching compensation" });
-    }
-  });
-
-  router.post("/compensation", async (req, res) => {
-    try {
-      const compensation = await compensationService.create(req.body);
-      res.json(compensation);
-    } catch (error) {
-      res.status(500).json({ message: "Error creating compensation record" });
-    }
-  });
 
   // Health check endpoint
   router.get("/health", (_req, res) => {
