@@ -55,6 +55,21 @@ export default function EmployeeForm({ onSuccess, employee }: Props) {
     },
   });
 
+  // Reset form when employee data changes
+  useEffect(() => {
+    if (employee) {
+      form.reset({
+        name: employee.name,
+        employeeId: employee.employeeId,
+        jobRoleId: employee.jobRoleId,
+        department: employee.department,
+        siteId: employee.siteId,
+        isUser: employee.isUser,
+        managerId: employee.managerId,
+      });
+    }
+  }, [employee, form]);
+
   const onSubmit = async (data: z.infer<typeof employeeSchema>) => {
     try {
       if (employee) {
