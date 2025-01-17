@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import { registerRoutes } from "./routes";
-import { setupAuth } from "./auth";
+// import { setupAuth } from "./auth";  // Temporarily disabled
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
@@ -43,9 +43,6 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = createServer(app);
-
-  // Setup authentication first
-  setupAuth(app);
 
   // Setup API routes
   const apiRouter = express.Router();

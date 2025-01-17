@@ -3,16 +3,9 @@ import { db } from "@db";
 import { employees, compensation, sites, auditLogs } from "@db/schema";
 import { eq } from "drizzle-orm";
 
-const requireAuth = (req: any, res: any, next: any) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.status(401).send("Unauthorized");
-};
-
 export function registerRoutes(router: Router) {
   // Employee routes
-  router.get("/employees", requireAuth, async (req, res) => {
+  router.get("/employees", async (_req, res) => {
     try {
       const allEmployees = await db.select().from(employees);
       res.json(allEmployees);
@@ -21,7 +14,7 @@ export function registerRoutes(router: Router) {
     }
   });
 
-  router.post("/employees", requireAuth, async (req: any, res) => {
+  router.post("/employees", async (req, res) => {
     try {
       const [employee] = await db
         .insert(employees)
@@ -29,7 +22,7 @@ export function registerRoutes(router: Router) {
         .returning();
 
       await db.insert(auditLogs).values({
-        userId: req.user.id,
+        userId: 1, // Default system user ID for now
         action: "CREATE",
         entityType: "EMPLOYEE",
         entityId: employee.id,
@@ -43,7 +36,7 @@ export function registerRoutes(router: Router) {
   });
 
   // Site routes
-  router.get("/sites", requireAuth, async (_req, res) => {
+  router.get("/sites", async (_req, res) => {
     try {
       const allSites = await db.select().from(sites);
       res.json(allSites);
@@ -53,7 +46,7 @@ export function registerRoutes(router: Router) {
   });
 
   // Compensation routes
-  router.get("/compensation/:employeeId", requireAuth, async (req, res) => {
+  router.get("/compensation/:employeeId", async (req, res) => {
     try {
       const employeeCompensation = await db
         .select()
@@ -65,7 +58,7 @@ export function registerRoutes(router: Router) {
     }
   });
 
-  router.post("/compensation", requireAuth, async (req: any, res) => {
+  router.post("/compensation", async (req, res) => {
     try {
       const [comp] = await db
         .insert(compensation)
@@ -73,7 +66,7 @@ export function registerRoutes(router: Router) {
         .returning();
 
       await db.insert(auditLogs).values({
-        userId: req.user.id,
+        userId: 1, // Default system user ID for now
         action: "CREATE",
         entityType: "COMPENSATION",
         entityId: comp.id,
