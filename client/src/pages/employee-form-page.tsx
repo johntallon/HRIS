@@ -35,7 +35,7 @@ export default function EmployeeFormPage() {
         <Tabs defaultValue="details" className="space-y-4">
           <TabsList>
             <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="compensation">Compensation History</TabsTrigger>
+            <TabsTrigger value="compensation">Compensation</TabsTrigger>
           </TabsList>
           
           <TabsContent value="details">
@@ -43,7 +43,18 @@ export default function EmployeeFormPage() {
           </TabsContent>
           
           <TabsContent value="compensation">
-            <CompensationForm employee={employee} onSuccess={() => {}} />
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-medium">Compensation Records</h3>
+                <Button onClick={() => setCompensationDialogOpen(true)}>
+                  Add Compensation
+                </Button>
+              </div>
+              <CompensationForm 
+                employee={employee} 
+                onSuccess={() => setCompensationDialogOpen(false)} 
+              />
+            </div>
           </TabsContent>
         </Tabs>
       )}
