@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import CompensationForm from "@/components/compensation-form";
+import CompensationHistory from "@/components/compensation-history";
 import type { Employee } from "@db/schema";
 
 export default function EmployeeFormPage() {
