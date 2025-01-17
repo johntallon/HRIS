@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -44,9 +43,9 @@ type Props = {
 
 export default function EmployeeForm({ employee: initialEmployee }: Props) {
   const id = initialEmployee?.id || Number(window.location.pathname.split('/').pop());
-  const { createEmployee, updateEmployee, employee: fetchedEmployee, isLoading } = useEmployees(id);
+  const { createEmployee, updateEmployee, employee: fetchedEmployee, isLoading, employees } = useEmployees(id);
   const [, setLocation] = useLocation();
-  
+
   const employee = initialEmployee || fetchedEmployee;
   const isEditMode = Boolean(employee);
 
@@ -217,6 +216,32 @@ export default function EmployeeForm({ employee: initialEmployee }: Props) {
                   </FormItem>
                 )}
               />
+
+      <FormField
+        control={form.control}
+        name="managerId"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Manager</FormLabel>
+            <Select onValueChange={(value) => field.onChange(value ? Number(value) : null)} value={field.value?.toString()}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a manager" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="">No Manager</SelectItem>
+                {employees?.filter(e => e.id !== id).map((manager) => (
+                  <SelectItem key={manager.id} value={manager.id.toString()}>
+                    {manager.name} - {manager.jobRole}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
             </CardContent>
           </Card>
 
