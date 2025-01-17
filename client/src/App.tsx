@@ -8,7 +8,7 @@ import OrgChart from "@/pages/org-chart";
 import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/layout";
-import EmployeeForm from "@/pages/employee-form"; //Import the EmployeeForm component
+import EmployeeForm from "@/components/employee-form"; //Import the EmployeeForm component
 
 function Router() {
   return (
