@@ -1,6 +1,7 @@
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import SearchBar from "@/components/search-bar";
 import {
   Users,
   LayoutDashboard,
@@ -83,7 +84,8 @@ export default function Layout({ children }: LayoutProps) {
       <div className="flex-1 overflow-auto">
         <header className="bg-white shadow-sm p-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-xl font-semibold">Welcome, {user?.username}</h1>
+            <SearchBar />
+            <h1 className="text-xl font-semibold">Welcome{user?.username ? `, ${user.username}` : ''}</h1>
           </div>
         </header>
         <main className="p-6">{children}</main>
