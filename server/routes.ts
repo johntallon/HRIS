@@ -46,6 +46,24 @@ export function registerRoutes(router: Router) {
     }
   });
 
+  router.get("/employees/:id", async (req, res) => {
+    try {
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, parseInt(req.params.id)));
+      
+      if (!employee) {
+        return res.status(404).json({ message: "Employee not found" });
+      }
+      
+      res.json(employee);
+    } catch (error) {
+      console.error('Error fetching employee:', error);
+      res.status(500).json({ message: String(error) });
+    }
+  });
+
   router.post("/employees", async (req, res) => {
     try {
       const [employee] = await db

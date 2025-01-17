@@ -2,15 +2,23 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Employee, NewEmployee } from "@db/schema";
 import { useToast } from "@/hooks/use-toast";
 
-export function useEmployees() {
+export function useEmployees(id?: number) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: employees, isLoading } = useQuery<Employee[]>({
+  const { data: employees, isLoading: isLoadingAll } = useQuery<Employee[]>({
     queryKey: ['/api/employees'],
     retry: 1,
     initialData: []
   });
+
+  const { data: employee, isLoading: isLoadingOne } = useQuery<Employee>({
+    queryKey: [`/api/employees/${id}`],
+    enabled: !!id,
+    retry: 1
+  });
+
+  const isLoading = isLoadingAll || isLoadingOne;
 
   const createMutation = useMutation({
     mutationFn: async (data: NewEmployee) => {

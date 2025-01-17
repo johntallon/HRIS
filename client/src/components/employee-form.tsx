@@ -42,9 +42,12 @@ type Props = {
   employee?: Employee;
 };
 
-export default function EmployeeForm({ employee }: Props) {
-  const { createEmployee, updateEmployee } = useEmployees();
+export default function EmployeeForm({ employee: initialEmployee }: Props) {
+  const id = initialEmployee?.id || Number(window.location.pathname.split('/').pop());
+  const { createEmployee, updateEmployee, employee: fetchedEmployee, isLoading } = useEmployees(id);
   const [, setLocation] = useLocation();
+  
+  const employee = initialEmployee || fetchedEmployee;
   const isEditMode = Boolean(employee);
 
   const form = useForm<EmployeeFormData>({
