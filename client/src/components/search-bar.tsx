@@ -17,16 +17,25 @@ import {
 } from "@/components/ui/popover";
 import type { Employee } from "@db/schema";
 
+type EmployeeResponse = {
+  data: Employee[];
+  total: number;
+  page: number;
+  totalPages: number;
+};
+
 export default function SearchBar() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [search, setSearch] = useState("");
 
-  const { data: employees } = useQuery<Employee[]>({
+  const { data: employeesResponse } = useQuery<EmployeeResponse>({
     queryKey: ['/api/employees'],
   });
 
-  const filteredEmployees = employees?.filter((employee) =>
+  const employees = employeesResponse?.data || [];
+
+  const filteredEmployees = employees.filter((employee) =>
     employee.name.toLowerCase().includes(search.toLowerCase()) ||
     employee.employeeId.toLowerCase().includes(search.toLowerCase()) ||
     employee.department.toLowerCase().includes(search.toLowerCase())
@@ -43,7 +52,7 @@ export default function SearchBar() {
         >
           <Search className="mr-2 h-4 w-4" />
           {value
-            ? employees?.find((employee) => employee.name === value)?.name
+            ? employees.find((employee) => employee.name === value)?.name
             : "Search employees..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -57,7 +66,7 @@ export default function SearchBar() {
           />
           <CommandEmpty>No employee found.</CommandEmpty>
           <CommandGroup>
-            {filteredEmployees?.map((employee) => (
+            {filteredEmployees.map((employee) => (
               <CommandItem
                 key={employee.id}
                 value={employee.name}

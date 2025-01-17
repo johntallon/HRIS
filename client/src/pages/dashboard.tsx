@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'; // Assuming react-query is used
 import { useEmployees } from "@/hooks/use-employees";
 import {
   Card,
@@ -9,8 +10,17 @@ import {
 import { Loader2, Users, Building, CircleDollarSign } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
+interface EmployeeResponse {
+  data: {
+    department: string;
+  }[];
+}
+
+
 export default function Dashboard() {
-  const { employees, isLoading } = useEmployees();
+  const { data: employeesResponse, isLoading } = useQuery<EmployeeResponse>({
+    queryKey: ['/api/employees'],
+  });
 
   if (isLoading) {
     return (
@@ -20,8 +30,9 @@ export default function Dashboard() {
     );
   }
 
-  const totalEmployees = employees?.length || 0;
-  const employeesByDepartment = employees?.reduce((acc, emp) => {
+  const employees = employeesResponse?.data || [];
+  const totalEmployees = employees.length;
+  const employeesByDepartment = employees.reduce((acc, emp) => {
     acc[emp.department] = (acc[emp.department] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
