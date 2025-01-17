@@ -54,9 +54,7 @@ export function registerRoutes(router: Router) {
       .leftJoin(sites, eq(employees.siteId, sites.id));
 
       if (filter) {
-        query = query.where(
-          sql`CAST(${employees.name} AS text) LIKE ${`%${filter}%`}`
-        );
+        query = query.where(like(employees.name, `%${filter}%`));
       }
 
       if (sort) {
