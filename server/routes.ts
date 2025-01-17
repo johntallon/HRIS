@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@db";
 import { employees, compensation, sites, auditLogs, jobRoles } from "@db/schema";
-import { eq } from "drizzle-orm";
+import { eq, like, desc, sql } from "drizzle-orm";
 
 export function registerRoutes(router: Router) {
   // Job Roles routes
@@ -36,10 +36,43 @@ export function registerRoutes(router: Router) {
   });
 
   // Employee routes
-  router.get("/employees", async (_req, res) => {
+  router.get("/employees", async (req, res) => {
     try {
-      const allEmployees = await db.select().from(employees);
-      res.json(allEmployees || []);
+      const { page = 1, limit = 10, sort, filter } = req.query;
+
+      let query = db.select({
+        id: employees.id,
+        name: employees.name,
+        employeeId: employees.employeeId,
+        jobRole: jobRoles.title,
+        department: employees.department,
+        site: sites.name,
+        managerId: employees.managerId
+      })
+      .from(employees)
+      .leftJoin(jobRoles, eq(employees.jobRoleId, jobRoles.id))
+      .leftJoin(sites, eq(employees.siteId, sites.id));
+
+      if (filter) {
+        query = query.where(like(employees.name, `%${filter}%`));
+      }
+
+      if (sort) {
+        const [field, order] = (sort as string).split(':');
+        query = query.orderBy(desc(field as any));
+      }
+
+      const offset = (Number(page) - 1) * Number(limit);
+      const [countResult] = await db.select({ count: sql`count(*)` }).from(employees);
+
+      const results = await query.limit(Number(limit)).offset(offset);
+
+      res.json({
+        data: results,
+        total: countResult.count,
+        page: Number(page),
+        totalPages: Math.ceil(countResult.count / Number(limit))
+      });
     } catch (error) {
       console.error('Error fetching employees:', error);
       res.status(500).json({ message: String(error) });
@@ -52,11 +85,11 @@ export function registerRoutes(router: Router) {
         .select()
         .from(employees)
         .where(eq(employees.id, parseInt(req.params.id)));
-      
+
       if (!employee) {
         return res.status(404).json({ message: "Employee not found" });
       }
-      
+
       res.json(employee);
     } catch (error) {
       console.error('Error fetching employee:', error);

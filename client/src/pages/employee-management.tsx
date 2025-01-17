@@ -23,11 +23,19 @@ import { Loader2, Plus, Download } from "lucide-react";
 import type { Employee } from "@db/schema";
 
 export default function EmployeeManagement() {
-  const { employees, isLoading } = useEmployees();
+  const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState("");
+  const [sort, setSort] = useState("");
+  const { data: employeesData, isLoading } = useQuery(['employees', page, filter, sort], 
+    () => fetch(`/api/employees?page=${page}&filter=${filter}&sort=${sort}`).then(res => res.json())
+  );
   const [compensationDialogOpen, setCompensationDialogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [, setLocation] = useLocation();
   const [isEmployeeRoute] = useRoute("/employees/:id");
+
+  const employees = employeesData?.data || [];
+  const totalPages = employeesData?.totalPages || 1;
 
   const handleCompensationClick = (employee: Employee) => {
     setSelectedEmployee(employee);
@@ -92,18 +100,31 @@ export default function EmployeeManagement() {
         </div>
       </div>
 
-      <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Employee ID</TableHead>
-              <TableHead>Job Role</TableHead>
-              <TableHead>Department</TableHead>
-              <TableHead>Site</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+      <div className="space-y-2">
+        <Input
+          placeholder="Filter employees..."
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="max-w-sm"
+        />
+        <div className="border rounded-lg">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead onClick={() => setSort(`name:${sort === 'name:asc' ? 'desc' : 'asc'}`)} className="cursor-pointer">
+                  Name {sort.startsWith('name:') && (sort === 'name:asc' ? '↑' : '↓')}
+                </TableHead>
+                <TableHead onClick={() => setSort(`employeeId:${sort === 'employeeId:asc' ? 'desc' : 'asc'}`)} className="cursor-pointer">
+                  Employee ID {sort.startsWith('employeeId:') && (sort === 'employeeId:asc' ? '↑' : '↓')}
+                </TableHead>
+                <TableHead>Job Role</TableHead>
+                <TableHead onClick={() => setSort(`department:${sort === 'department:asc' ? 'desc' : 'asc'}`)} className="cursor-pointer">
+                  Department {sort.startsWith('department:') && (sort === 'department:asc' ? '↑' : '↓')}
+                </TableHead>
+                <TableHead>Site</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
           <TableBody>
             {employees?.map((employee) => (
               <TableRow key={employee.id}>
@@ -134,6 +155,27 @@ export default function EmployeeManagement() {
             ))}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setPage(page - 1)}
+          disabled={page === 1}
+        >
+          Previous
+        </Button>
+        <div className="text-sm text-muted-foreground">
+          Page {page} of {totalPages}
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setPage(page + 1)}
+          disabled={page === totalPages}
+        >
+          Next
+        </Button>
       </div>
 
       {selectedEmployee && (
