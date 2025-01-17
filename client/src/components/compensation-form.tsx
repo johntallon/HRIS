@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 const compensationSchema = z.object({
   employeeId: z.number(),
   title: z.string().min(1, "Title is required"),
-  startDate: z.string().min(1, "Start date is required"),
+  startDate: z.coerce.date(),
   amount: z.number().min(0, "Amount must be positive"),
   notes: z.string().optional(),
 });

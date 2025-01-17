@@ -13,7 +13,7 @@ const employeeFilterSchema = z.object({
 const compensationSchema = z.object({
   employeeId: z.number(),
   title: z.string(),
-  startDate: z.string(),
+  startDate: z.coerce.date(),
   amount: z.number(),
   notes: z.string().optional()
 });
