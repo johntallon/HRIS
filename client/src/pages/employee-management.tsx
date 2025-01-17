@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEmployees } from "@/hooks/use-employees";
 import EmployeeForm from "@/components/employee-form";
 import CompensationForm from "@/components/compensation-form";
+import { Input } from "@/components/ui/input";
 import { useLocation, useRoute } from "wouter";
 import {
   Table,
