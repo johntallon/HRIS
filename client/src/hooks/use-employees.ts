@@ -85,6 +85,7 @@ export function useEmployees(id?: number) {
 
   return {
     employees,
+    employee,
     isLoading,
     createEmployee: createMutation.mutate,
     updateEmployee: updateMutation.mutate,

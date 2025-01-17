@@ -72,7 +72,7 @@ export default function EmployeeForm({ employee: initialEmployee }: Props) {
   });
 
   useEffect(() => {
-    if (employee) {
+    if (employee && !form.formState.isDirty) {
       form.reset({
         name: employee.name,
         employeeId: employee.employeeId,
@@ -81,14 +81,16 @@ export default function EmployeeForm({ employee: initialEmployee }: Props) {
         siteId: employee.siteId || 0,
         isUser: employee.isUser,
         managerId: employee.managerId,
+      }, {
+        keepDefaultValues: true
       });
     }
   }, [employee, form]);
 
   const onSubmit = async (data: EmployeeFormData) => {
     try {
-      if (isEditMode && employee) {
-        await updateEmployee({ id: employee.id, data });
+      if (isEditMode && id) {
+        await updateEmployee({ id, data });
       } else {
         await createEmployee(data);
       }
