@@ -6,11 +6,12 @@ export function useEmployees(id?: number) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: employees, isLoading: isLoadingAll } = useQuery<Employee[]>({
+  const { data: employeesResponse, isLoading: isLoadingAll } = useQuery({
     queryKey: ['/api/employees'],
     retry: 1,
-    initialData: []
   });
+
+  const employees = employeesResponse?.data || [];
 
   const { data: employee, isLoading: isLoadingOne } = useQuery<Employee>({
     queryKey: [`/api/employees/${id}`],
