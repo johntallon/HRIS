@@ -40,35 +40,23 @@ export function registerRoutes(router: Router) {
     try {
       const { page = 1, limit = 10, sort, filter } = req.query;
 
-      let query = db.select({
-        id: employees.id,
-        name: employees.name,
-        employeeId: employees.employeeId,
-        jobRoleId: employees.jobRoleId,
-        department: employees.department,
-        siteId: employees.siteId,
-        managerId: employees.managerId
-      })
-      .from(employees)
-      .leftJoin(jobRoles, eq(employees.jobRoleId, jobRoles.id))
-      .leftJoin(sites, eq(employees.siteId, sites.id));
+      let query = db.select()
+        .from(employees)
+        .leftJoin(jobRoles, eq(employees.jobRoleId, jobRoles.id))
+        .leftJoin(sites, eq(employees.siteId, sites.id));
 
       if (filter) {
-        query = query.where(like(employees.name, `%${filter}%`));
+        query = query.where(sql`${employees.name} ILIKE ${`%${filter}%`}`);
       }
 
       if (sort) {
         const [field, order] = (sort as string).split(':');
-        if (field && order) {
-          query = query.orderBy((qb) => {
-            const column = employees[field as keyof typeof employees];
-            return order === 'asc' ? asc(column) : desc(column);
-          });
-        }
+        const direction = order === 'asc' ? 'ASC' : 'DESC';
+        query = query.orderBy(sql`${sql.identifier(field)} ${sql.raw(direction)}`);
       }
 
       const offset = (Number(page) - 1) * Number(limit);
-      const [countResult] = await db.select({ count: sql`count(*)` }).from(employees);
+      const countResult = await db.select({ count: sql`count(*)::integer` }).from(employees);
 
       const results = await query.limit(Number(limit)).offset(offset);
 
