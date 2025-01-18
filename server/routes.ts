@@ -69,12 +69,15 @@ export function registerRoutes(router: Router) {
       });
 
       // Fetch job role names and add them to the employee objects.
-      const employeesWithJobRoleNames = await Promise.all(employees.map(async (employee) => {
+      const employeesWithJobRoleNames = await Promise.all(employees.data.map(async (employee) => {
         const jobRole = await jobRoleService.findById(employee.jobRoleId);
         return { ...employee, jobRoleName: jobRole ? jobRole.name : null };
       }));
 
-      res.json(employeesWithJobRoleNames);
+      res.json({
+        ...employees,
+        data: employeesWithJobRoleNames
+      });
     } catch (error) {
       console.error('Error fetching employees:', error);
       res.status(500).json({ message: String(error) });
