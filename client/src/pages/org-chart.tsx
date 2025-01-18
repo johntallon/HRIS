@@ -1,6 +1,6 @@
 import { useEmployees } from "@/hooks/use-employees";
 import { Loader2 } from "lucide-react";
-import { OrganizationalChartComponent } from '@syncfusion/ej2-react-diagrams';
+import { DiagramComponent } from '@syncfusion/ej2-react-diagrams';
 
 export default function OrgChart() {
   const { employees, isLoading } = useEmployees();
@@ -40,7 +40,7 @@ export default function OrgChart() {
         Organization Chart
       </h2>
       <div className="h-[600px] w-full">
-        <OrganizationalChartComponent 
+        <DiagramComponent 
           id="orgChart"
           dataSource={[dataSource]}
           getNodeDefaults={(obj) => {
