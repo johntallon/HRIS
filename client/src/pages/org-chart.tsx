@@ -94,12 +94,12 @@ export default function OrgChart() {
       <h2 className="text-3xl font-bold text-gray-800 text-center">
         Organization Chart
       </h2>
-      <div className="min-w-[800px] p-12 flex justify-center items-center">
+      <div className="min-w-[800px] p-12">
         <Tree
           lineWidth="2px"
           lineColor="#94a3b8"
           lineBorderRadius="12px"
-          className="flex flex-col items-center w-full"
+          className="flex flex-col items-center"
           label={
             <div className="bg-white rounded-lg shadow hover:shadow-md transition-all duration-200 w-72">
               <div className="flex items-center p-3 cursor-pointer">
