@@ -4,14 +4,14 @@ import { Loader2 } from "lucide-react";
 import { Tree, TreeNode } from "react-organizational-chart";
 import type { Employee } from "@db/schema";
 
-// Generate a random pastel color based on job role
+// Generate professional color schemes based on job role
 const getColorClass = (role: string) => {
   const colors = {
-    'CEO': 'bg-blue-100 border-blue-300',
-    'Manager': 'bg-green-100 border-green-300',
-    'Developer': 'bg-yellow-100 border-yellow-300',
-    'Designer': 'bg-pink-100 border-pink-300',
-    'default': 'bg-gray-100 border-gray-300'
+    'CEO': 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-400 shadow-blue-100',
+    'Manager': 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-400 shadow-emerald-100',
+    'Developer': 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-400 shadow-amber-100',
+    'Designer': 'bg-gradient-to-br from-rose-50 to-rose-100 border-rose-400 shadow-rose-100',
+    'default': 'bg-gradient-to-br from-slate-50 to-slate-100 border-slate-400 shadow-slate-100'
   };
   return colors[role] || colors.default;
 };
@@ -27,17 +27,17 @@ function EmployeeNode({ employee, employees }: EmployeeNodeProps) {
   return (
     <TreeNode
       label={
-        <div className={`rounded-xl shadow-lg border-2 w-56 overflow-hidden ${getColorClass(employee.jobRole)}`}>
-          <div className="p-4">
-            <div className="flex items-center justify-center mb-2">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border-2 border-current">
+        <div className={`rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border-2 w-64 overflow-hidden ${getColorClass(employee.jobRole)}`}>
+          <div className="p-5">
+            <div className="flex items-center justify-center mb-3">
+              <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center border-2 border-current shadow-inner text-xl font-semibold">
                 {employee.name.charAt(0)}
               </div>
             </div>
-            <div className="text-center">
-              <div className="font-semibold text-gray-800">{employee.name}</div>
-              <div className="text-sm font-medium text-gray-700">{employee.jobTitle}</div>
-              <div className="text-xs text-gray-500 mt-1">{employee.jobRole}</div>
+            <div className="text-center space-y-1">
+              <div className="font-bold text-gray-900">{employee.name}</div>
+              <div className="text-sm font-semibold text-gray-700">{employee.jobTitle}</div>
+              <div className="text-xs font-medium text-gray-600 bg-white/50 rounded-full py-1 px-3 inline-block">{employee.jobRole}</div>
             </div>
           </div>
         </div>
@@ -77,9 +77,9 @@ export default function OrgChart() {
   }
 
   return (
-    <div className="space-y-4 overflow-x-auto bg-gray-50 rounded-lg p-8">
-      <h2 className="text-2xl font-bold text-gray-800">Organization Chart</h2>
-      <div className="min-w-[800px] p-8">
+    <div className="space-y-6 overflow-x-auto bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 shadow-inner">
+      <h2 className="text-3xl font-bold text-gray-800 text-center">Organization Chart</h2>
+      <div className="min-w-[800px] p-12">
         <Tree
           lineWidth="2px"
           lineColor="#94a3b8"
