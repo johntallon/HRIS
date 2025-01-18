@@ -142,6 +142,23 @@ export function registerRoutes(router: Router) {
   });
 
 
+  // Authentication endpoints
+  router.get("/api/user", (req, res) => {
+    if (req.isAuthenticated()) {
+      return res.json(req.user);
+    }
+    res.status(401).json({ message: "Not authenticated" });
+  });
+
+  router.post("/api/logout", (req, res) => {
+    req.logout((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Error during logout" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
   // Health check endpoint
   router.get("/health", (_req, res) => {
     res.json({ status: "ok" });
