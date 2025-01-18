@@ -42,7 +42,20 @@ export default function OrgChart() {
       <div className="h-[600px] w-full">
         <DiagramComponent 
           id="orgChart"
-          dataSource={[dataSource]}
+          width="100%"
+          height="100%"
+          layout={{
+            type: 'OrganizationalChart',
+            horizontalSpacing: 40,
+            verticalSpacing: 40,
+            margin: { top: 20 },
+            orientation: 'TopToBottom'
+          }}
+          dataSourceSettings={{
+            id: 'Id',
+            parentId: '',
+            dataSource: [dataSource]
+          }}
           getNodeDefaults={(obj) => {
             obj.shape = { type: 'Basic', shape: 'Rectangle' };
             obj.style = { fill: 'white' };
