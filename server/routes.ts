@@ -143,28 +143,12 @@ export function registerRoutes(router: Router) {
   });
 
 
-  // Authentication endpoints
-  router.get("/auth/login", 
-    passport.authenticate("azuread-openidconnect", { 
-      failureRedirect: "/auth",
-      failureFlash: true 
-    })
-  );
-
-  router.post("/auth/callback",
-    passport.authenticate("azuread-openidconnect", {
-      successRedirect: "/",
-      failureRedirect: "/auth",
-      failureFlash: true
-    })
-  );
-
-  router.get("/api/user", (req, res) => {
-    if (req.isAuthenticated()) {
-      return res.json(req.user);
+  router.get("/api/user", 
+    passport.authenticate('azure-ad-bearer-token', { session: false }),
+    (req, res) => {
+      res.json(req.user);
     }
-    res.status(401).json({ message: "Not authenticated" });
-  });
+  );
 
   router.post("/api/logout", (req, res) => {
     req.logout((err) => {

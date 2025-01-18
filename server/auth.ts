@@ -1,6 +1,6 @@
 
 import passport from "passport";
-import { OIDCStrategy } from "passport-azure-ad";
+import { BearerStrategy } from "passport-azure-ad";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { users } from "@db/schema";
@@ -11,15 +11,10 @@ import { type Express } from "express";
 const config = {
   identityMetadata: process.env.AZURE_AD_IDENTITY_METADATA,
   clientID: process.env.AZURE_AD_CLIENT_ID,
-  clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
-  responseType: 'code id_token',
-  responseMode: 'form_post',
-  redirectUrl: process.env.AZURE_AD_REDIRECT_URI || 'http://0.0.0.0:5000/auth/callback',
-  allowHttpForRedirectUrl: true,
   validateIssuer: true,
   issuer: process.env.AZURE_AD_ISSUER,
   passReqToCallback: false,
-  scope: ['profile', 'email', 'openid']
+  audience: process.env.AZURE_AD_CLIENT_ID,
 };
 
 export function setupAuth(app: Express) {
@@ -36,7 +31,7 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  passport.use(new OIDCStrategy(config, async (profile: any, done: any) => {
+  passport.use(new BearerStrategy(config, async (token: any, done: any) => {
     try {
       const [user] = await db
         .select()

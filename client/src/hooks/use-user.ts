@@ -1,86 +1,83 @@
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { User } from "@db/schema";
 import { useToast } from "@/hooks/use-toast";
+import { PublicClientApplication, type AccountInfo } from "@azure/msal-browser";
 
-type LoginData = {
-  username: string;
-  password: string;
+const msalConfig = {
+  auth: {
+    clientId: process.env.AZURE_AD_CLIENT_ID!,
+    authority: process.env.AZURE_AD_AUTHORITY!,
+    redirectUri: "http://0.0.0.0:5000",
+  }
 };
+
+const msalInstance = new PublicClientApplication(msalConfig);
 
 export function useUser() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
+  
   const { data: user, error, isLoading } = useQuery<User>({
-    queryKey: ['/auth/callback'],
-    retry: false,
-  });
-
-  const loginMutation = useMutation({
-    mutationFn: async (data: LoginData) => {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error(await response.text());
+    queryKey: ['/api/user'],
+    queryFn: async () => {
+      const account = msalInstance.getAllAccounts()[0];
+      if (!account) {
+        throw new Error('No logged in user');
       }
-
+      
+      const token = await msalInstance.acquireTokenSilent({
+        scopes: ['user.read'],
+        account
+      });
+      
+      const response = await fetch('/api/user', {
+        headers: {
+          'Authorization': `Bearer ${token.accessToken}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch user');
+      }
+      
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/user'] });
-      toast({
-        title: "Success",
-        description: "Logged in successfully",
+    retry: false
+  });
+
+  const login = async () => {
+    try {
+      await msalInstance.loginRedirect({
+        scopes: ['user.read']
       });
-    },
-    onError: (error: Error) => {
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
       });
-    },
-  });
+    }
+  };
 
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch('/api/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
-
-      return response.json();
-    },
-    onSuccess: () => {
+  const logout = async () => {
+    try {
+      await msalInstance.logout();
       queryClient.invalidateQueries({ queryKey: ['/api/user'] });
-      toast({
-        title: "Success",
-        description: "Logged out successfully",
-      });
-    },
-    onError: (error: Error) => {
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
       });
-    },
-  });
+    }
+  };
 
   return {
     user,
     isLoading,
     error,
-    login: loginMutation.mutate,
-    logout: logoutMutation.mutate,
+    login,
+    logout,
   };
 }
