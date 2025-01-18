@@ -1,9 +1,9 @@
+
 import { JobRoleService } from "./job-role.service";
 import { EmployeeService } from "./employee.service";
 import { SiteService } from "./site.service";
 import { CompensationService } from "./compensation.service";
 
-// Service factory to ensure singleton instances
 export class ServiceFactory {
   private static jobRoleService: JobRoleService;
   private static employeeService: EmployeeService;
@@ -44,5 +44,3 @@ export class ServiceFactory {
     await this.getSiteService().initializeDefaultSites();
   }
 }
-
-export { ServiceFactory };
