@@ -30,7 +30,8 @@ export default function Dashboard() {
     );
   }
 
-  const employees = employeesResponse?.data || [];
+  const employeesData = employeesResponse?.data || {};
+  const employees = Array.isArray(employeesData) ? employeesData : Object.values(employeesData);
   const totalEmployees = employees.length;
   const employeesByDepartment = employees.reduce((acc, emp) => {
     acc[emp.department] = (acc[emp.department] || 0) + 1;
