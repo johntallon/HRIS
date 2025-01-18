@@ -11,16 +11,35 @@ type EmployeeNodeProps = {
 
 function EmployeeNode({ employee, employees }: EmployeeNodeProps) {
   const directReports = employees.filter((e) => e.managerId === employee.id);
+  
+  // Generate a random pastel color based on job role
+  const getColorClass = (role: string) => {
+    const colors = {
+      'CEO': 'bg-blue-100 border-blue-300',
+      'Manager': 'bg-green-100 border-green-300',
+      'Developer': 'bg-yellow-100 border-yellow-300',
+      'Designer': 'bg-pink-100 border-pink-300',
+      'default': 'bg-gray-100 border-gray-300'
+    };
+    return colors[role] || colors.default;
+  };
 
   return (
     <TreeNode
       label={
-        <Card className="w-48 cursor-pointer hover:shadow-md transition-shadow">
-          <CardContent className="p-4 text-center">
-            <div className="font-medium">{employee.name}</div>
-            <div className="text-sm text-muted-foreground">{employee.jobRole}</div>
-          </CardContent>
-        </Card>
+        <div className={`rounded-xl shadow-lg border-2 w-56 overflow-hidden ${getColorClass(employee.jobRole)}`}>
+          <div className="p-4">
+            <div className="flex items-center justify-center mb-2">
+              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border-2 border-current">
+                {employee.name.charAt(0)}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold text-gray-800">{employee.name}</div>
+              <div className="text-sm text-gray-600 mt-1">{employee.jobRole}</div>
+            </div>
+          </div>
+        </div>
       }
     >
       {directReports.map((report) => (
@@ -57,20 +76,27 @@ export default function OrgChart() {
   }
 
   return (
-    <div className="space-y-4 overflow-x-auto">
-      <h2 className="text-2xl font-bold">Organization Chart</h2>
+    <div className="space-y-4 overflow-x-auto bg-gray-50 rounded-lg p-8">
+      <h2 className="text-2xl font-bold text-gray-800">Organization Chart</h2>
       <div className="min-w-[800px] p-8">
         <Tree
           lineWidth="2px"
-          lineColor="#ccc"
-          lineBorderRadius="6px"
+          lineColor="#94a3b8"
+          lineBorderRadius="12px"
           label={
-            <Card className="w-48">
-              <CardContent className="p-4 text-center bg-primary text-primary-foreground">
-                <div className="font-medium">{ceo.name}</div>
-                <div className="text-sm">{ceo.jobRole}</div>
-              </CardContent>
-            </Card>
+            <div className="rounded-xl shadow-lg border-2 w-56 overflow-hidden bg-blue-100 border-blue-300">
+              <div className="p-4">
+                <div className="flex items-center justify-center mb-2">
+                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border-2 border-blue-400">
+                    {ceo.name.charAt(0)}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="font-semibold text-gray-800">{ceo.name}</div>
+                  <div className="text-sm text-gray-600 mt-1">{ceo.jobRole}</div>
+                </div>
+              </div>
+            </div>
           }
         >
           {employees
