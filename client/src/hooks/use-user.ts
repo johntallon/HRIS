@@ -1,76 +1,42 @@
-
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { User } from "@db/schema";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from "@/hooks/use-toast";
-import { PublicClientApplication, type AccountInfo } from "@azure/msal-browser";
-
-const msalConfig = {
-  auth: {
-    clientId: import.meta.env.VITE_AZURE_AD_CLIENT_ID!,
-    authority: import.meta.env.VITE_AZURE_AD_AUTHORITY!,
-    redirectUri: "http://0.0.0.0:5000",
-  }
-};
-
-const msalInstance = new PublicClientApplication(msalConfig);
+import type { User } from "@db/schema";
 
 export function useUser() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+
   const { data: user, error, isLoading } = useQuery<User>({
     queryKey: ['/api/user'],
     queryFn: async () => {
-      const account = msalInstance.getAllAccounts()[0];
-      if (!account) {
-        throw new Error('No logged in user');
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No token found');
       }
-      
-      const token = await msalInstance.acquireTokenSilent({
-        scopes: ['user.read'],
-        account
-      });
-      
+
       const response = await fetch('/api/user', {
         headers: {
-          'Authorization': `Bearer ${token.accessToken}`
+          'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch user');
       }
-      
+
       return response.json();
     },
     retry: false
   });
 
   const login = async () => {
-    try {
-      await msalInstance.loginRedirect({
-        scopes: ['user.read']
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
+    window.location.href = '/auth/login';
   };
 
-  const logout = async () => {
-    try {
-      await msalInstance.logout();
-      queryClient.invalidateQueries({ queryKey: ['/api/user'] });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
+  const logout = () => {
+    localStorage.removeItem('auth_token');
+    queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+    window.location.href = '/auth';
   };
 
   return {
