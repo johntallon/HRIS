@@ -19,11 +19,10 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen flex">
       {/* Video Section */}
-      <div className="flex-1 bg-black">
+      <div className="flex-1 bg-white">
         <video 
           className="w-full h-full object-cover"
           autoPlay 
-          loop 
           muted 
           playsInline
         >
@@ -33,7 +32,7 @@ export default function AuthPage() {
       </div>
 
       {/* Login Section */}
-      <div className="flex-1 flex items-center justify-center bg-gray-50">
+      <div className="flex-1 flex items-center justify-center bg-white">
         <Card className="w-full max-w-md mx-8">
           <CardHeader>
             <CardTitle className="text-center">HR Information System</CardTitle>
