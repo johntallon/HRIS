@@ -145,13 +145,16 @@ export function registerRoutes(router: Router) {
 
   // Authentication endpoints
   router.get("/auth/login", 
-    passport.authenticate("azure-ad-bearer-token")
+    passport.authenticate("azuread-openidconnect", { 
+      failureRedirect: "/auth",
+      failureFlash: true 
+    })
   );
 
-  router.get("/auth/callback",
-    passport.authenticate("azure-ad-bearer-token", {
+  router.post("/auth/callback",
+    passport.authenticate("azuread-openidconnect", {
       successRedirect: "/",
-      failureRedirect: "/login",
+      failureRedirect: "/auth",
       failureFlash: true
     })
   );

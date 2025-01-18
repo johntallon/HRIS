@@ -1,5 +1,6 @@
+
 import passport from "passport";
-import { BearerStrategy } from "passport-azure-ad";
+import { OIDCStrategy } from "passport-azure-ad";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { users } from "@db/schema";
@@ -10,10 +11,15 @@ import { type Express } from "express";
 const config = {
   identityMetadata: process.env.AZURE_AD_IDENTITY_METADATA,
   clientID: process.env.AZURE_AD_CLIENT_ID,
+  clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+  responseType: 'code id_token',
+  responseMode: 'form_post',
+  redirectUrl: process.env.AZURE_AD_REDIRECT_URI || 'http://0.0.0.0:5000/auth/callback',
+  allowHttpForRedirectUrl: true,
   validateIssuer: true,
   issuer: process.env.AZURE_AD_ISSUER,
   passReqToCallback: false,
-  audience: process.env.AZURE_AD_CLIENT_ID,
+  scope: ['profile', 'email', 'openid']
 };
 
 export function setupAuth(app: Express) {
@@ -30,24 +36,22 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  passport.use(new BearerStrategy(config, async (token: any, done: any) => {
+  passport.use(new OIDCStrategy(config, async (profile: any, done: any) => {
     try {
-      // Check if user exists in our database
       const [user] = await db
         .select()
         .from(users)
-        .where(eq(users.entraId, token.oid))
+        .where(eq(users.entraId, profile.oid))
         .limit(1);
 
       if (!user) {
-        // Create new user if doesn't exist
         const [newUser] = await db
           .insert(users)
           .values({
-            username: token.preferred_username,
-            entraId: token.oid,
+            username: profile.preferred_username || profile.upn,
+            entraId: profile.oid,
             role: "Employee",
-            password: "" // Not needed with Entra ID
+            password: ""
           })
           .returning();
         return done(null, newUser);
