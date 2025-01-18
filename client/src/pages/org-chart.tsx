@@ -1,5 +1,4 @@
 import { useEmployees } from "@/hooks/use-employees";
-import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { Tree, TreeNode } from "react-organizational-chart";
 import type { Employee } from "@db/schema";
@@ -7,11 +6,15 @@ import type { Employee } from "@db/schema";
 // Generate professional color schemes based on job role
 const getColorClass = (role: string) => {
   const colors = {
-    'CEO': 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-400 shadow-blue-100',
-    'Manager': 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-400 shadow-emerald-100',
-    'Developer': 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-400 shadow-amber-100',
-    'Designer': 'bg-gradient-to-br from-rose-50 to-rose-100 border-rose-400 shadow-rose-100',
-    'default': 'bg-gradient-to-br from-slate-50 to-slate-100 border-slate-400 shadow-slate-100'
+    CEO: "bg-gradient-to-br from-blue-50 to-blue-100 border-blue-400 shadow-blue-100",
+    Manager:
+      "bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-400 shadow-emerald-100",
+    Developer:
+      "bg-gradient-to-br from-amber-50 to-amber-100 border-amber-400 shadow-amber-100",
+    Designer:
+      "bg-gradient-to-br from-rose-50 to-rose-100 border-rose-400 shadow-rose-100",
+    default:
+      "bg-gradient-to-br from-slate-50 to-slate-100 border-slate-400 shadow-slate-100",
   };
   return colors[role] || colors.default;
 };
@@ -34,10 +37,22 @@ function EmployeeNode({ employee, employees }: EmployeeNodeProps) {
             </div>
             <div className="flex-grow">
               <div className="font-medium text-gray-900">{employee.name}</div>
-              <div className="text-sm text-gray-500">{employee.jobTitle} - {employee.jobRole}</div>
+              <div className="text-sm text-gray-500">
+                {employee.department} - {employee.jobRoleName}
+              </div>
             </div>
             <div className="text-gray-400">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
             </div>
@@ -46,11 +61,7 @@ function EmployeeNode({ employee, employees }: EmployeeNodeProps) {
       }
     >
       {directReports.map((report) => (
-        <EmployeeNode
-          key={report.id}
-          employee={report}
-          employees={employees}
-        />
+        <EmployeeNode key={report.id} employee={report} employees={employees} />
       ))}
     </TreeNode>
   );
@@ -80,7 +91,9 @@ export default function OrgChart() {
 
   return (
     <div className="space-y-6 overflow-x-auto bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 shadow-inner">
-      <h2 className="text-3xl font-bold text-gray-800 text-center">Organization Chart</h2>
+      <h2 className="text-3xl font-bold text-gray-800 text-center">
+        Organization Chart
+      </h2>
       <div className="min-w-[800px] p-12">
         <Tree
           lineWidth="2px"
@@ -94,10 +107,22 @@ export default function OrgChart() {
                 </div>
                 <div className="flex-grow">
                   <div className="font-medium text-gray-900">{ceo.name}</div>
-                  <div className="text-sm text-gray-500">{ceo.jobTitle} - {ceo.jobRole}</div>
+                  <div className="text-sm text-gray-500">
+                    {ceo.department} - {ceo.jobRoleName}
+                  </div>
                 </div>
                 <div className="text-gray-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
                 </div>

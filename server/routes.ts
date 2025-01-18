@@ -22,7 +22,7 @@ export function registerRoutes(router: Router) {
   const employeeService = ServiceFactory.getEmployeeService();
   const compensationService = ServiceFactory.getCompensationService();
   const jobRoleService = ServiceFactory.getJobRoleService(); // Added JobRoleService
-
+  const siteService = ServiceFactory.getSiteService(); // Added SiteService
   // Compensation routes
   router.get("/compensation/:employeeId", async (req, res) => {
     try {
@@ -74,9 +74,15 @@ export function registerRoutes(router: Router) {
         return { ...employee, jobRoleName: jobRole ? jobRole.name : null };
       }));
 
+      // Fetch job role names and add them to the employee objects.
+      const employeesWithSiteNames = await Promise.all(employees.data.map(async (employee) => {
+        const site = await siteService.findById(employee.siteId);
+        return { ...employee, siteName: site ? site.name : null };
+      }));
+
       res.json({
         ...employees,
-        data: employeesWithJobRoleNames
+        data: {...employeesWithJobRoleNames, ...employeesWithSiteNames}, 
       });
     } catch (error) {
       console.error('Error fetching employees:', error);
@@ -124,6 +130,17 @@ export function registerRoutes(router: Router) {
       res.status(500).json({ message: "Error fetching job roles" });
     }
   });
+
+  // Sites endpoint
+  router.get("/sites", async (req, res) => {
+    try {
+      const sites = await siteService.findAll();
+      res.json(sites);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching sites" });
+    }
+  });
+
 
   // Health check endpoint
   router.get("/health", (_req, res) => {

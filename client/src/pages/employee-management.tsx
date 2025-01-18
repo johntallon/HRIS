@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, Plus, Download } from "lucide-react";
-import type { Employee, JobRole } from "@db/schema";
+import type { Employee, JobRole, Site } from "@db/schema";
 
 type SearchFilters = {
   search?: string;
@@ -39,6 +39,10 @@ export default function EmployeeManagement() {
 
   const { data: jobRoles } = useQuery<JobRole[]>({
     queryKey: ['/api/job-roles'],
+  });
+
+  const { data: sites } = useQuery<Site[]>({
+    queryKey: ['/api/sites'],
   });
 
   const { data: employeesData, isLoading } = useQuery({
