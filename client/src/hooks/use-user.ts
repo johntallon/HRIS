@@ -12,7 +12,7 @@ export function useUser() {
   const queryClient = useQueryClient();
 
   const { data: user, error, isLoading } = useQuery<User>({
-    queryKey: ['/api/user'],
+    queryKey: ['/auth/callback'],
     retry: false,
   });
 
