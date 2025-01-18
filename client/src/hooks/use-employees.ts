@@ -11,7 +11,9 @@ export function useEmployees(id?: number) {
     retry: 1,
   });
 
-  const employees = employeesResponse?.data || [];
+  const employees = Array.isArray(employeesResponse?.data) 
+    ? employeesResponse.data 
+    : Object.values(employeesResponse?.data || {});
 
   const { data: employee, isLoading: isLoadingOne } = useQuery<Employee>({
     queryKey: [`/api/employees/${id}`],
