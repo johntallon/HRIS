@@ -20,11 +20,11 @@ export function setupAuth(app: Express) {
   const MemoryStore = createMemoryStore(session);
 
   app.use(session({
-    secret: process.env.REPL_ID || "hr-system-secret",
+    secret: process.env.SESSION_SECRET || "hr-system-secret",
     resave: false,
     saveUninitialized: false,
     store: new MemoryStore({ checkPeriod: 86400000 }),
-    cookie: app.get("env") === "production" ? { secure: true } : {}
+    cookie: { secure: process.env.NODE_ENV === "production" }
   }));
 
   app.use(passport.initialize());
