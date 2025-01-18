@@ -1,6 +1,6 @@
 import { useEmployees } from "@/hooks/use-employees";
 import { Loader2 } from "lucide-react";
-import { DiagramComponent } from '@syncfusion/ej2-react-diagrams';
+import { DiagramComponent, Inject, DataBinding, HierarchicalTree } from '@syncfusion/ej2-react-diagrams';
 
 export default function OrgChart() {
   const { employees, isLoading } = useEmployees();
@@ -44,7 +44,13 @@ export default function OrgChart() {
           id="orgChart"
           width="100%"
           height="100%"
+          tool={{ enableZooming: true }}
           layout={{
+            type: 'HierarchicalTree',
+            horizontalSpacing: 50,
+            verticalSpacing: 50,
+            margin: { top: 20 },
+            orientation: 'TopToBottom',
             type: 'OrganizationalChart',
             horizontalSpacing: 50,
             verticalSpacing: 50,
