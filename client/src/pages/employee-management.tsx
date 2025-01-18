@@ -65,9 +65,8 @@ export default function EmployeeManagement() {
     },
   });
 
-  const employeesData = employeesResponse?.data || {};
-  const employees = Array.isArray(employeesData) ? employeesData : Object.values(employeesData);
-  const totalPages = employeesResponse?.totalPages || 1;
+  const employees = Array.isArray(employeesData?.data) ? employeesData.data : Object.values(employeesData?.data || {});
+  const totalPages = employeesData?.totalPages || 1;
 
   const handleCompensationClick = (employee: Employee) => {
     setSelectedEmployee(employee);
