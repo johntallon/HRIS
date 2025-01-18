@@ -15,7 +15,8 @@ export const jobRoles = pgTable("job_roles", {
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").unique().notNull(),
-  password: text("password").notNull(),
+  password: text("password"),
+  entraId: text("entra_id").unique(),
   employeeId: integer("employee_id").references(() => employees.id),
   role: text("role").notNull().default("Employee"),
   permissions: text("permissions").notNull().default("Personal Only"),
