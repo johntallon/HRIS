@@ -85,16 +85,17 @@ export default function OrgChart() {
           lineColor="#94a3b8"
           lineBorderRadius="12px"
           label={
-            <div className="rounded-xl shadow-lg border-2 w-56 overflow-hidden bg-blue-100 border-blue-300">
+            <div className={`rounded-xl shadow-lg border-2 w-56 overflow-hidden ${getColorClass(ceo.jobRole)}`}>
               <div className="p-4">
                 <div className="flex items-center justify-center mb-2">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border-2 border-blue-400">
+                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border-2 border-current">
                     {ceo.name.charAt(0)}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="font-semibold text-gray-800">{ceo.name}</div>
-                  <div className="text-sm text-gray-600 mt-1">{ceo.jobRole}</div>
+                  <div className="text-sm font-medium text-gray-700">{ceo.jobTitle}</div>
+                  <div className="text-xs text-gray-500 mt-1">{ceo.jobRole}</div>
                 </div>
               </div>
             </div>
