@@ -4,6 +4,18 @@ import { Loader2 } from "lucide-react";
 import { Tree, TreeNode } from "react-organizational-chart";
 import type { Employee } from "@db/schema";
 
+// Generate a random pastel color based on job role
+const getColorClass = (role: string) => {
+  const colors = {
+    'CEO': 'bg-blue-100 border-blue-300',
+    'Manager': 'bg-green-100 border-green-300',
+    'Developer': 'bg-yellow-100 border-yellow-300',
+    'Designer': 'bg-pink-100 border-pink-300',
+    'default': 'bg-gray-100 border-gray-300'
+  };
+  return colors[role] || colors.default;
+};
+
 type EmployeeNodeProps = {
   employee: Employee;
   employees: Employee[];
@@ -11,18 +23,6 @@ type EmployeeNodeProps = {
 
 function EmployeeNode({ employee, employees }: EmployeeNodeProps) {
   const directReports = employees.filter((e) => e.managerId === employee.id);
-  
-  // Generate a random pastel color based on job role
-  const getColorClass = (role: string) => {
-    const colors = {
-      'CEO': 'bg-blue-100 border-blue-300',
-      'Manager': 'bg-green-100 border-green-300',
-      'Developer': 'bg-yellow-100 border-yellow-300',
-      'Designer': 'bg-pink-100 border-pink-300',
-      'default': 'bg-gray-100 border-gray-300'
-    };
-    return colors[role] || colors.default;
-  };
 
   return (
     <TreeNode
