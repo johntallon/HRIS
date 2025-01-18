@@ -33,7 +33,8 @@ export default function SearchBar() {
     queryKey: ['/api/employees'],
   });
 
-  const employees = employeesResponse?.data || [];
+  const employeesData = employeesResponse?.data || {};
+  const employees = Array.isArray(employeesData) ? employeesData : Object.values(employeesData);
 
   const filteredEmployees = employees.filter((employee) =>
     employee.name.toLowerCase().includes(search.toLowerCase()) ||
