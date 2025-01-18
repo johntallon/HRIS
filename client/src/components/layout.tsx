@@ -93,7 +93,16 @@ export default function Layout({ children }: LayoutProps) {
         <header className="bg-white shadow-sm p-4">
           <div className="flex justify-between items-center">
             <SearchBar />
-            <h1 className="text-xl font-semibold">Welcome{user?.username ? `, ${user.username}` : ''}</h1>
+            <div className="flex items-center gap-4">
+              <h1 className="text-xl font-semibold">Welcome{user?.username ? `, ${user.username}` : ''}</h1>
+              {!user && (
+                <Link href="/auth">
+                  <Button variant="outline">
+                    Log In
+                  </Button>
+                </Link>
+              )}
+            </div>
           </div>
         </header>
         <main className="p-6">{children}</main>
