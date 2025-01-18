@@ -6,8 +6,8 @@ import { PublicClientApplication, type AccountInfo } from "@azure/msal-browser";
 
 const msalConfig = {
   auth: {
-    clientId: process.env.AZURE_AD_CLIENT_ID!,
-    authority: process.env.AZURE_AD_AUTHORITY!,
+    clientId: import.meta.env.VITE_AZURE_AD_CLIENT_ID!,
+    authority: import.meta.env.VITE_AZURE_AD_AUTHORITY!,
     redirectUri: "http://0.0.0.0:5000",
   }
 };
