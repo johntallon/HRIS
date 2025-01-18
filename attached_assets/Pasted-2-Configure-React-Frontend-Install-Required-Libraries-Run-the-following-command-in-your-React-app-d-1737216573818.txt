@@ -1,0 +1,153 @@
+2. Configure React Frontend
+Install Required Libraries
+Run the following command in your React app directory:
+
+bash
+Copy
+Edit
+npm install @azure/msal-browser @azure/msal-react
+Configure MSAL Provider
+Create an authConfig.ts file in your React app with the following content:
+
+typescript
+Copy
+Edit
+export const msalConfig = {
+    auth: {
+        clientId: "1b1ffb5b-8849-45d7-98c0-630b7d83c647", // Your Client ID
+        authority: "https://login.microsoftonline.com/90f9f222-ca81-4252-ab4a-a9974c8557b2", // Your Tenant ID
+        redirectUri: "http://localhost:3000", // Update with your app's redirect URI
+    },
+};
+
+export const loginRequest = {
+    scopes: ["User.Read"], // Request additional scopes as needed
+};
+Wrap your app in the MSAL Provider: Update your index.tsx:
+
+tsx
+Copy
+Edit
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { PublicClientApplication } from "@azure/msal-browser";
+import { MsalProvider } from "@azure/msal-react";
+import { msalConfig } from "./authConfig";
+import App from "./App";
+
+const msalInstance = new PublicClientApplication(msalConfig);
+
+const root = ReactDOM.createRoot(document.getElementById("root")!);
+root.render(
+    <MsalProvider instance={msalInstance}>
+        <App />
+    </MsalProvider>
+);
+Add Login Button: Add a login button to your app:
+
+tsx
+Copy
+Edit
+import React from "react";
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from "./authConfig";
+
+const LoginButton: React.FC = () => {
+    const { instance } = useMsal();
+
+    const handleLogin = () => {
+        instance.loginPopup(loginRequest).catch((e) => {
+            console.error(e);
+        });
+    };
+
+    return <button onClick={handleLogin}>Login</button>;
+};
+
+export default LoginButton;
+3. Set Up the Backend
+Install Required Libraries
+Run:
+
+bash
+Copy
+Edit
+npm install express @azure/msal-node body-parser
+Configure MSAL Node Middleware
+Create a authConfig.ts file in your backend:
+
+typescript
+Copy
+Edit
+export const config = {
+    auth: {
+        clientId: "1b1ffb5b-8849-45d7-98c0-630b7d83c647",
+        authority: "https://login.microsoftonline.com/90f9f222-ca81-4252-ab4a-a9974c8557b2",
+        clientSecret: "YOUR_CLIENT_SECRET", // Create a secret in Azure Portal
+    },
+};
+Implement Authentication Middleware: Create an authMiddleware.ts:
+
+typescript
+Copy
+Edit
+import { ConfidentialClientApplication } from "@azure/msal-node";
+
+const msalClient = new ConfidentialClientApplication(config);
+
+export const authenticateToken = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).send("Missing or invalid token");
+    }
+
+    const token = authHeader.split(" ")[1];
+    try {
+        const result = await msalClient.acquireTokenOnBehalfOf({
+            oboAssertion: token,
+            scopes: ["User.Read"], // Add the required scopes
+        });
+        req.user = result.account;
+        next();
+    } catch (error) {
+        console.error(error);
+        res.status(403).send("Token validation failed");
+    }
+};
+Use Middleware in Your Backend:
+Set up routes in server.ts or equivalent:
+
+typescript
+Copy
+Edit
+import express from "express";
+import { authenticateToken } from "./authMiddleware";
+
+const app = express();
+app.use(express.json());
+
+app.get("/api/protected", authenticateToken, (req, res) => {
+   res.json({ message: "Protected data", user: req.user });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+4. Enable CORS (Frontend to Backend)
+Add cors middleware to your backend:
+
+bash
+Copy
+Edit
+npm install cors
+In your backend:
+
+typescript
+Copy
+Edit
+import cors from "cors";
+app.use(cors({ origin: "http://localhost:3000" }));
+5. Test the Flow
+Start your backend (npm start).
+Start your React app (npm start).
+Log in through the React app and call protected backend routes.
+This setup uses MSAL for both frontend and backend to manage tokens securely.
