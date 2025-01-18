@@ -27,17 +27,19 @@ function EmployeeNode({ employee, employees }: EmployeeNodeProps) {
   return (
     <TreeNode
       label={
-        <div className={`rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border-2 w-64 overflow-hidden ${getColorClass(employee.jobRole)}`}>
-          <div className="p-5">
-            <div className="flex items-center justify-center mb-3">
-              <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center border-2 border-current shadow-inner text-xl font-semibold">
-                {employee.name.charAt(0)}
-              </div>
+        <div className="bg-white rounded-lg shadow hover:shadow-md transition-all duration-200 w-72">
+          <div className="flex items-center p-3 cursor-pointer">
+            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mr-3">
+              {employee.name.charAt(0)}
             </div>
-            <div className="text-center space-y-1">
-              <div className="font-bold text-gray-900">{employee.name}</div>
-              <div className="text-sm font-semibold text-gray-700">{employee.jobTitle}</div>
-              <div className="text-xs font-medium text-gray-600 bg-white/50 rounded-full py-1 px-3 inline-block">{employee.jobRole}</div>
+            <div className="flex-grow">
+              <div className="font-medium text-gray-900">{employee.name}</div>
+              <div className="text-sm text-gray-500">{employee.jobTitle} - {employee.jobRole}</div>
+            </div>
+            <div className="text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
             </div>
           </div>
         </div>
@@ -85,17 +87,19 @@ export default function OrgChart() {
           lineColor="#94a3b8"
           lineBorderRadius="12px"
           label={
-            <div className={`rounded-xl shadow-lg border-2 w-56 overflow-hidden ${getColorClass(ceo.jobRole)}`}>
-              <div className="p-4">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border-2 border-current">
-                    {ceo.name.charAt(0)}
-                  </div>
+            <div className="bg-white rounded-lg shadow hover:shadow-md transition-all duration-200 w-72">
+              <div className="flex items-center p-3 cursor-pointer">
+                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mr-3">
+                  {ceo.name.charAt(0)}
                 </div>
-                <div className="text-center">
-                  <div className="font-semibold text-gray-800">{ceo.name}</div>
-                  <div className="text-sm font-medium text-gray-700">{ceo.jobTitle}</div>
-                  <div className="text-xs text-gray-500 mt-1">{ceo.jobRole}</div>
+                <div className="flex-grow">
+                  <div className="font-medium text-gray-900">{ceo.name}</div>
+                  <div className="text-sm text-gray-500">{ceo.jobTitle} - {ceo.jobRole}</div>
+                </div>
+                <div className="text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
                 </div>
               </div>
             </div>
