@@ -13,7 +13,7 @@ export default function AuthPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    window.location.href = '/auth/login';
+    window.location.href = '/api/auth/login';
   };
 
   return (
