@@ -144,6 +144,10 @@ export function registerRoutes(router: Router) {
 
 
   // Authentication endpoints
+  router.get("/auth/login", 
+    passport.authenticate("azure-ad-bearer-token")
+  );
+
   router.get("/auth/callback",
     passport.authenticate("azure-ad-bearer-token", {
       successRedirect: "/",
