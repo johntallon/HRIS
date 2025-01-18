@@ -4,7 +4,7 @@ import { SiteService } from "./site.service";
 import { CompensationService } from "./compensation.service";
 
 // Service factory to ensure singleton instances
-class ServiceFactory {
+export class ServiceFactory {
   private static jobRoleService: JobRoleService;
   private static employeeService: EmployeeService;
   private static siteService: SiteService;
