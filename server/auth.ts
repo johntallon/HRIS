@@ -9,12 +9,12 @@ import { eq } from "drizzle-orm";
 import { type Express } from "express";
 
 const config = {
-  identityMetadata: process.env.AZURE_AD_IDENTITY_METADATA,
-  clientID: process.env.AZURE_AD_CLIENT_ID,
+  identityMetadata: `https://login.microsoftonline.com/90f9f222-ca81-4252-ab4a-a9974c8557b2/v2.0/.well-known/openid-configuration`,
+  clientID: '1b1ffb5b-8849-45d7-98c0-630b7d83c647',
   validateIssuer: true,
-  issuer: process.env.AZURE_AD_ISSUER,
+  issuer: `https://login.microsoftonline.com/90f9f222-ca81-4252-ab4a-a9974c8557b2/v2.0`,
   passReqToCallback: false,
-  audience: process.env.AZURE_AD_CLIENT_ID,
+  audience: '1b1ffb5b-8849-45d7-98c0-630b7d83c647',
 };
 
 export function setupAuth(app: Express) {

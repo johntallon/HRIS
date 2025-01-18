@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@db/schema";
+import { msalInstance, loginRequest } from '@/lib/auth';
 
 export function useUser() {
   const { toast } = useToast();
@@ -9,14 +10,19 @@ export function useUser() {
   const { data: user, error, isLoading } = useQuery<User>({
     queryKey: ['/api/user'],
     queryFn: async () => {
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        throw new Error('No token found');
+      const account = msalInstance.getAllAccounts()[0];
+      if (!account) {
+        throw new Error('Not authenticated');
       }
+
+      const tokenResponse = await msalInstance.acquireTokenSilent({
+        ...loginRequest,
+        account,
+      });
 
       const response = await fetch('/api/user', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${tokenResponse.accessToken}`
         }
       });
 
@@ -30,13 +36,21 @@ export function useUser() {
   });
 
   const login = async () => {
-    window.location.href = '/auth/login';
+    try {
+      await msalInstance.loginPopup(loginRequest);
+      queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+    } catch (err) {
+      toast({
+        title: "Login failed",
+        description: "Failed to login with Azure AD",
+        variant: "destructive",
+      });
+    }
   };
 
-  const logout = () => {
-    localStorage.removeItem('auth_token');
+  const logout = async () => {
+    await msalInstance.logoutPopup();
     queryClient.invalidateQueries({ queryKey: ['/api/user'] });
-    window.location.href = '/auth';
   };
 
   return {
