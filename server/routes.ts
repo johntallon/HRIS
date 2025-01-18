@@ -143,6 +143,14 @@ export function registerRoutes(router: Router) {
 
 
   // Authentication endpoints
+  router.get("/auth/callback",
+    passport.authenticate("azure-ad-bearer-token", {
+      successRedirect: "/",
+      failureRedirect: "/login",
+      failureFlash: true
+    })
+  );
+
   router.get("/api/user", (req, res) => {
     if (req.isAuthenticated()) {
       return res.json(req.user);
