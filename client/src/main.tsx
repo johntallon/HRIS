@@ -12,7 +12,9 @@ import { msalConfig } from "./authConfig";
 const msalInstance = new PublicClientApplication(msalConfig);
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App/>
-  </StrictMode>,
+  <MsalProvider instance={msalInstance}>
+      <StrictMode>
+        <App/>
+      </StrictMode>
+    </MsalProvider>,
 );

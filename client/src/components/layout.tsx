@@ -3,6 +3,7 @@ import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import SearchBar from "@/components/search-bar";
+import LoginButton from "@/components/LoginButton";
 import {
   Users,
   LayoutDashboard,
@@ -97,9 +98,7 @@ export default function Layout({ children }: LayoutProps) {
               <h1 className="text-xl font-semibold">Welcome{user?.username ? `, ${user.username}` : ''}</h1>
               {!user && (
                 <Link href="/auth">
-                  <Button variant="outline">
-                    Log In
-                  </Button>
+                  <LoginButton />
                 </Link>
               )}
             </div>
