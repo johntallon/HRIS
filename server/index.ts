@@ -1,12 +1,15 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import { registerRoutes } from "./routes";
-// import { setupAuth } from "./auth";  // Temporarily disabled
+import { setupAuth } from "./auth";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Initialize auth
+const passport = setupAuth(app);
 
 // Logging middleware for API routes
 app.use((req, res, next) => {
