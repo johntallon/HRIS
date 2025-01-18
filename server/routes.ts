@@ -1,6 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import { ServiceFactory } from "./services";
+import { authenticateToken } from "./authMiddleware";
 import { z } from "zod";
 
 const employeeFilterSchema = z.object({
@@ -16,7 +17,7 @@ const compensationSchema = z.object({
   title: z.string(),
   startDate: z.coerce.date(),
   amount: z.number(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 
 export function registerRoutes(router: Router) {
@@ -27,7 +28,9 @@ export function registerRoutes(router: Router) {
   // Compensation routes
   router.get("/compensation/:employeeId", async (req, res) => {
     try {
-      const compensation = await compensationService.findByEmployeeId(parseInt(req.params.employeeId));
+      const compensation = await compensationService.findByEmployeeId(
+        parseInt(req.params.employeeId),
+      );
       res.json(compensation);
     } catch (error) {
       res.status(500).json({ message: String(error) });
@@ -70,23 +73,27 @@ export function registerRoutes(router: Router) {
       });
 
       // Fetch job role names and add them to the employee objects.
-      const employeesWithJobRoleNames = await Promise.all(employees.data.map(async (employee) => {
-        const jobRole = await jobRoleService.findById(employee.jobRoleId);
-        return { ...employee, jobRoleName: jobRole ? jobRole.name : null };
-      }));
+      const employeesWithJobRoleNames = await Promise.all(
+        employees.data.map(async (employee) => {
+          const jobRole = await jobRoleService.findById(employee.jobRoleId);
+          return { ...employee, jobRoleName: jobRole ? jobRole.name : null };
+        }),
+      );
 
       // Fetch job role names and add them to the employee objects.
-      const employeesWithSiteNames = await Promise.all(employees.data.map(async (employee) => {
-        const site = await siteService.findById(employee.siteId);
-        return { ...employee, siteName: site ? site.name : null };
-      }));
+      const employeesWithSiteNames = await Promise.all(
+        employees.data.map(async (employee) => {
+          const site = await siteService.findById(employee.siteId);
+          return { ...employee, siteName: site ? site.name : null };
+        }),
+      );
 
       res.json({
         ...employees,
-        data: {...employeesWithJobRoleNames, ...employeesWithSiteNames}, 
+        data: { ...employeesWithJobRoleNames, ...employeesWithSiteNames },
       });
     } catch (error) {
-      console.error('Error fetching employees:', error);
+      console.error("Error fetching employees:", error);
       res.status(500).json({ message: String(error) });
     }
   });
@@ -114,13 +121,15 @@ export function registerRoutes(router: Router) {
 
   router.put("/employees/:id", async (req, res) => {
     try {
-      const employee = await employeeService.update(parseInt(req.params.id), req.body);
+      const employee = await employeeService.update(
+        parseInt(req.params.id),
+        req.body,
+      );
       res.json(employee);
     } catch (error) {
       res.status(500).json({ message: "Error updating employee" });
     }
   });
-
 
   // Job Roles endpoint
   router.get("/job-roles", async (req, res) => {
@@ -142,12 +151,12 @@ export function registerRoutes(router: Router) {
     }
   });
 
-
-  router.get("/api/user", 
-    passport.authenticate('azure-ad-bearer-token', { session: false }),
+  router.get(
+    "/api/user",
+    passport.authenticate("azure-ad-bearer-token", { session: false }),
     (req, res) => {
       res.json(req.user);
-    }
+    },
   );
 
   router.post("/api/logout", (req, res) => {
@@ -157,6 +166,10 @@ export function registerRoutes(router: Router) {
       }
       res.json({ message: "Logged out successfully" });
     });
+  });
+
+  router.get("/api/protected", authenticateToken, (req, res) => {
+    res.json({ message: "Protected data", user: req.user });
   });
 
   // Health check endpoint
