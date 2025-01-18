@@ -46,15 +46,30 @@ export default function OrgChart() {
           height="100%"
           layout={{
             type: 'OrganizationalChart',
-            horizontalSpacing: 40,
-            verticalSpacing: 40,
+            horizontalSpacing: 50,
+            verticalSpacing: 50,
             margin: { top: 20 },
-            orientation: 'TopToBottom'
+            orientation: 'TopToBottom',
+            getLayoutInfo: (node, options) => {
+              return {
+                ...options,
+                assistantHorizontalSpacing: 50,
+                assistantVerticalSpacing: 50,
+              };
+            }
+          }}
+          tool={{
+            enableZooming: true,
           }}
           dataSourceSettings={{
             id: 'Id',
-            parentId: '',
-            dataSource: [dataSource]
+            parentId: 'managerId',
+            dataSource: employees.map(e => ({
+              Id: e.id.toString(),
+              managerId: e.managerId?.toString(),
+              Name: e.name,
+              Role: `${e.department} - ${e.jobRoleName}`
+            }))
           }}
           getNodeDefaults={(obj) => {
             obj.shape = { type: 'Basic', shape: 'Rectangle' };
