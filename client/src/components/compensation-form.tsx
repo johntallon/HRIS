@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import type { Employee } from "@db/schema";
+import type { Employee, Compensation } from "@db/schema";
 import {
   Form,
   FormControl,
@@ -30,7 +30,7 @@ type Props = {
   existingCompensation?: Compensation;
 };
 
-export default function CompensationForm({ employee, onSuccess }: Props) {
+export default function CompensationForm({ employee, onSuccess, existingCompensation }: Props) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -150,7 +150,7 @@ export default function CompensationForm({ employee, onSuccess }: Props) {
         />
 
         <div className="flex justify-end space-x-2">
-          <Button type="submit">Add Record</Button>
+          <Button type="submit">{existingCompensation ? 'Update Record' : 'Add Record'}</Button>
         </div>
       </form>
     </Form>
