@@ -1,3 +1,26 @@
+
+/* Organization Chart Lines */
+.p-organizationchart .p-organizationchart-line-down {
+    background: #c8c8c8;
+}
+
+.p-organizationchart .p-organizationchart-line-left {
+    border-right: 2px solid #c8c8c8;
+}
+
+.p-organizationchart .p-organizationchart-line-top {
+    border-top: 2px solid #c8c8c8;
+}
+
+.p-organizationchart .p-organizationchart-node-content {
+    border: none;
+    background: transparent;
+}
+
+.p-organizationchart .p-organizationchart-node-content .p-node-toggler {
+    background: #c8c8c8;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

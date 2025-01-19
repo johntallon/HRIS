@@ -54,6 +54,8 @@ export default function OrgChart() {
         <OrganizationChart
           value={data}
           nodeTemplate={nodeTemplate}
+          className="p-organizationchart-table"
+          selectionMode="single"
         />
       </div>
     </div>
