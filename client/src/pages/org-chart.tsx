@@ -28,7 +28,10 @@ export default function OrgChart() {
       key: employee.id.toString(),
       type: 'person',
       label: employee.name,
-      data: { role: `${employee.department} - ${employee.jobRoleName}` },
+      data: { 
+        role: `${employee.department} - ${employee.jobRoleName}`,
+        avatar: employee.avatar
+      },
       children: directReports.map(processEmployeeData),
       style: { borderRadius: '12px' }
     };
@@ -39,6 +42,11 @@ export default function OrgChart() {
   const nodeTemplate = (node) => {
     return (
       <div className="p-3 text-center bg-white rounded-xl border border-gray-200 shadow-sm">
+        <img 
+          src={node.data.avatar || '/Images/avatar.png'} 
+          alt={node.label}
+          className="w-12 h-12 rounded-full mx-auto mb-2 object-cover"
+        />
         <div className="text-lg font-semibold text-gray-900">{node.label}</div>
         <div className="text-sm text-gray-500">{node.data.role}</div>
       </div>

@@ -59,6 +59,7 @@ export default function EmployeeForm({ employee: initialEmployee }: Props) {
       siteId: employee.siteId || 0,
       isUser: employee.isUser,
       managerId: employee.managerId,
+      avatar: employee.avatar || '/Images/avatar.png',
     } : {
       name: "",
       employeeId: "",
@@ -67,6 +68,7 @@ export default function EmployeeForm({ employee: initialEmployee }: Props) {
       siteId: 0,
       isUser: true,
       managerId: null,
+      avatar: '/Images/avatar.png',
     }
   });
 

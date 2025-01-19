@@ -40,6 +40,7 @@ export const employees = pgTable("employees", {
   department: text("department").notNull(),
   isUser: boolean("is_user").default(true),
   managerId: integer("manager_id").references(() => employees.id),
+  avatar: text("avatar").default('/Images/avatar.png'),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
