@@ -1,5 +1,11 @@
 
 /* Organization Chart Lines */
+.p-organizationchart .p-organizationchart-node-content:not(.p-organizationchart-selectable-node) ~ table .p-organizationchart-line-down,
+.p-organizationchart .p-organizationchart-node-content:not(.p-organizationchart-selectable-node) ~ table .p-organizationchart-line-left,
+.p-organizationchart .p-organizationchart-node-content:not(.p-organizationchart-selectable-node) ~ table .p-organizationchart-line-top {
+    display: none;
+}
+
 .p-organizationchart .p-organizationchart-line-down {
     background: hsl(var(--primary) / 0.5);
     width: 2px;
