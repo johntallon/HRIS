@@ -1,5 +1,5 @@
 
-/* Organization Chart Lines */
+/* Organization Chart */
 .p-organizationchart {
     padding: 1rem;
 }
@@ -11,31 +11,28 @@
 }
 
 .p-organizationchart .p-organizationchart-lines {
+    display: table-cell;
     height: 20px;
 }
 
-.p-organizationchart .p-organizationchart-node-hidden .p-organizationchart-table,
-.p-organizationchart .p-organizationchart-node-hidden .p-organizationchart-lines {
-    display: none;
-}
-
 .p-organizationchart .p-organizationchart-line-down {
-    background: hsl(var(--primary) / 0.5);
-    width: 2px;
+    background-color: #495057;
+    width: 1px;
     height: 20px;
     margin: 0 auto;
 }
 
-.p-organizationchart .p-organizationchart-line-right {
-    border-right: 2px solid hsl(var(--primary) / 0.5);
-}
-
 .p-organizationchart .p-organizationchart-line-left {
-    border-right: 2px solid hsl(var(--primary) / 0.5);
+    border-right: 1px solid #495057;
+    border-radius: 0;
 }
 
 .p-organizationchart .p-organizationchart-line-top {
-    border-top: 2px solid hsl(var(--primary) / 0.5);
+    border-top: 1px solid #495057;
+}
+
+.p-organizationchart .p-organizationchart-line-right {
+    border-right: 1px solid #495057;
 }
 
 .p-organizationchart .p-organizationchart-nodes {
