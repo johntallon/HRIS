@@ -11,3 +11,16 @@
         @apply font-sans antialiased bg-background text-foreground;
     }
 }
+
+/* Organization Chart Lines */
+.p-organizationchart .p-organizationchart-line-down {
+    background: #333333;
+    width: 1.5px;
+}
+
+.p-organizationchart .p-organizationchart-line-left,
+.p-organizationchart .p-organizationchart-line-right,
+.p-organizationchart .p-organizationchart-line-top {
+    border-color: #333333;
+    border-width: 1.5px;
+}
