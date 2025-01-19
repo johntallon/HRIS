@@ -1,73 +1,13 @@
-
-/* Organization Chart */
-.p-organizationchart {
-    padding: 1rem;
-}
-
-.p-organizationchart .p-organizationchart-table {
-    margin: 0 auto;
-    border-spacing: 0;
-    border-collapse: separate;
-}
-
-.p-organizationchart .p-organizationchart-lines {
-    display: table-cell;
-    height: 20px;
-}
-
-.p-organizationchart .p-organizationchart-line-down {
-    background-color: #495057;
-    width: 1px;
-    height: 20px;
-    margin: 0 auto;
-}
-
-.p-organizationchart .p-organizationchart-line-left {
-    border-right: 1px solid #495057;
-    border-radius: 0;
-}
-
-.p-organizationchart .p-organizationchart-line-top {
-    border-top: 1px solid #495057;
-}
-
-.p-organizationchart .p-organizationchart-line-right {
-    border-right: 1px solid #495057;
-}
-
-.p-organizationchart .p-organizationchart-nodes {
-    padding: 0;
-    margin: 0;
-    display: table-cell;
-}
-
-.p-organizationchart .p-organizationchart-node-content {
-    border: none;
-    background: transparent;
-    padding: 0 1rem;
-}
-
-.p-organizationchart .p-organizationchart-node-content .p-node-toggler {
-    background: hsl(var(--primary));
-    border: 2px solid hsl(var(--primary) / 0.3);
-    color: white;
-}
-
-.p-organizationchart .p-organizationchart-node-content .p-node-toggler:hover {
-    background: hsl(var(--primary) / 0.9);
-    border-color: hsl(var(--primary) / 0.4);
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+    * {
+        @apply border-border;
+    }
 
-  body {
-    @apply font-sans antialiased bg-background text-foreground;
-  }
+    body {
+        @apply font-sans antialiased bg-background text-foreground;
+    }
 }

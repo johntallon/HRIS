@@ -56,13 +56,13 @@ export default function OrgChart() {
   return (
     <div className="space-y-6 overflow-x-auto bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 shadow-inner">
       <h2 className="text-3xl font-bold text-gray-800 text-center">
-        Organization Chart
+        Organisation Chart
       </h2>
       <div className="h-[600px] w-full overflow-auto">
         <OrganizationChart
           value={data}
           nodeTemplate={nodeTemplate}
-          className="p-organizationchart-table"
+          //className="p-organizationchart-table"
           selectionMode="single"
         />
       </div>
