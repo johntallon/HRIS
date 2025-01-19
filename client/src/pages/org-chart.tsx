@@ -43,7 +43,7 @@ export default function OrgChart() {
     return (
       <div className="p-3 text-center bg-white rounded-xl border border-gray-200 shadow-sm">
         <img 
-          src={node.data.avatar || '/Images/avatar.png'} 
+          src={node.data.avatar || '../Images/avatar.png'} 
           alt={node.label}
           className="w-12 h-12 rounded-full mx-auto mb-2 object-cover"
         />
