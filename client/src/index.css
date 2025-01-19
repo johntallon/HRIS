@@ -1,15 +1,18 @@
 
 /* Organization Chart Lines */
-.p-organizationchart .p-organizationchart-line-down {
+.p-organizationchart .p-organizationchart-node[data-expanded="true"] .p-organizationchart-line-down,
+.p-organizationchart .p-organizationchart-node[data-expanded="true"] ~ .p-organizationchart-line-down {
     background: hsl(var(--primary) / 0.3);
     width: 2px;
 }
 
-.p-organizationchart .p-organizationchart-line-left {
+.p-organizationchart .p-organizationchart-node[data-expanded="true"] .p-organizationchart-line-left,
+.p-organizationchart .p-organizationchart-node[data-expanded="true"] ~ .p-organizationchart-line-left {
     border-right: 2px solid hsl(var(--primary) / 0.3);
 }
 
-.p-organizationchart .p-organizationchart-line-top {
+.p-organizationchart .p-organizationchart-node[data-expanded="true"] .p-organizationchart-line-top,
+.p-organizationchart .p-organizationchart-node[data-expanded="true"] ~ .p-organizationchart-line-top {
     border-top: 2px solid hsl(var(--primary) / 0.3);
 }
 
