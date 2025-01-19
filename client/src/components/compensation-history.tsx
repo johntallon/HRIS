@@ -47,7 +47,7 @@ export default function CompensationHistory({ employeeId }: Props) {
           {compensations?.map((comp) => (
             <TableRow key={comp.id}>
               <TableCell>{comp.title}</TableCell>
-              <TableCell>{format(new Date(comp.startDate), 'MM/dd/yyyy')}</TableCell>
+              <TableCell>{new Intl.DateTimeFormat(navigator.language).format(new Date(comp.startDate))}</TableCell>
               <TableCell>${comp.amount.toLocaleString()}</TableCell>
               <TableCell>{comp.notes}</TableCell>
               <TableCell>
