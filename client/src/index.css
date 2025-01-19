@@ -1,24 +1,33 @@
 
 /* Organization Chart Lines */
 .p-organizationchart .p-organizationchart-line-down {
-    background: #c8c8c8;
+    background: hsl(var(--primary) / 0.3);
+    width: 2px;
 }
 
 .p-organizationchart .p-organizationchart-line-left {
-    border-right: 2px solid #c8c8c8;
+    border-right: 2px solid hsl(var(--primary) / 0.3);
 }
 
 .p-organizationchart .p-organizationchart-line-top {
-    border-top: 2px solid #c8c8c8;
+    border-top: 2px solid hsl(var(--primary) / 0.3);
 }
 
 .p-organizationchart .p-organizationchart-node-content {
     border: none;
     background: transparent;
+    padding: 0 1rem;
 }
 
 .p-organizationchart .p-organizationchart-node-content .p-node-toggler {
-    background: #c8c8c8;
+    background: hsl(var(--primary));
+    border: 2px solid hsl(var(--primary) / 0.3);
+    color: white;
+}
+
+.p-organizationchart .p-organizationchart-node-content .p-node-toggler:hover {
+    background: hsl(var(--primary) / 0.9);
+    border-color: hsl(var(--primary) / 0.4);
 }
 
 @tailwind base;
