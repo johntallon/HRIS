@@ -95,7 +95,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex justify-between items-center">
             <SearchBar />
             <div className="flex items-center gap-4">
-              <h1 className="text-xl font-semibold">Welcome{user?.username ? `, ${user.username}` : ''}</h1>
+              <h1 className="text-xl font-semibold">Welcome{user?.name ? `, ${user.name}` : ''}</h1>
               {!user && (
                 <Link href="/auth">
                   <LoginButton />

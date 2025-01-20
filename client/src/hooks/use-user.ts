@@ -37,8 +37,7 @@ export function useUser() {
 
   const login = async () => {
     try {
-      await msalInstance.loginPopup(loginRequest);
-      queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+      await msalInstance.loginRedirect(loginRequest);
     } catch (err) {
       toast({
         title: "Login failed",
