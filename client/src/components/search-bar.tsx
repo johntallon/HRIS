@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,7 @@ type EmployeeResponse = {
 };
 
 export default function SearchBar() {
+  const [, setLocation] = useLocation();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [search, setSearch] = useState("");
@@ -74,7 +76,9 @@ export default function SearchBar() {
                 onSelect={(currentValue) => {
                   setValue(currentValue === value ? "" : currentValue);
                   setOpen(false);
+                  setLocation(`/employees/${employee.id}`);
                 }}
+                className="cursor-pointer hover:bg-accent"
               >
                 <Check
                   className={cn(
