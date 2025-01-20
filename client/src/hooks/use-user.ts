@@ -48,7 +48,7 @@ export function useUser() {
   };
 
   const logout = async () => {
-    await msalInstance.logoutPopup();
+    await msalInstance.logoutRedirect();
     queryClient.invalidateQueries({ queryKey: ['/api/user'] });
   };
 
