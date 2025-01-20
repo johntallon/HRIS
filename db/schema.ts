@@ -32,9 +32,9 @@ export const sites = pgTable("sites", {
 });
 
 export const employees = pgTable("employees", {
-  id: serial("id").primaryKey(),
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
-  employeeId: text("employee_id").unique().notNull(),
+  employeeId: text("employee_id").unique().notNull().$defaultFn(() => crypto.randomUUID()),
   jobRoleId: integer("job_role").references(() => jobRoles.id),
   siteId: integer("site_id").references(() => sites.id),
   department: text("department").notNull(),
@@ -46,8 +46,8 @@ export const employees = pgTable("employees", {
 });
 
 export const compensation = pgTable("compensation", {
-  id: serial("id").primaryKey(),
-  employeeId: integer("employee_id").references(() => employees.id),
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  employeeId: text("employee_id").references(() => employees.id),
   title: text("title").notNull(),
   startDate: timestamp("start_date").notNull(),
   amount: integer("amount").notNull(),
