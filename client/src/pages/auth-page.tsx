@@ -11,28 +11,24 @@ export default function AuthPage() {
   const [, navigate] = useLocation();
 
   useEffect(() => {
-    if (accounts.length > 0) {
-      navigate("/");
-    }
-  }, [accounts, navigate]);
-
-  useEffect(() => {
     const initializeAuth = async () => {
-      if (!instance.initialized) {
-        try {
+      try {
+        if (!instance.initialized) {
           await instance.initialize();
           const response = await instance.handleRedirectPromise();
-          if (response) {
+          if (response || accounts.length > 0) {
             navigate("/");
           }
-        } catch (error) {
-          console.error("Handle Redirect Error:", error);
+        } else if (accounts.length > 0) {
+          navigate("/");
         }
+      } catch (error) {
+        console.error("Handle Redirect Error:", error);
       }
     };
 
     initializeAuth();
-  }, [instance, navigate]);
+  }, [instance, accounts, navigate]);
 
   const handleLogin = async () => {
     try {
