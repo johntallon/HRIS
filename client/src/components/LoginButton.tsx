@@ -7,7 +7,10 @@ const LoginButton: React.FC = () => {
     const { instance } = useMsal();
 
     const handleLogin = () => {
-        instance.loginRedirect(loginRequest).catch((e) => {
+        instance.loginRedirect({
+            ...loginRequest,
+            prompt: 'select_account'
+        }).catch((e) => {
             console.error(e);
         });
     };
