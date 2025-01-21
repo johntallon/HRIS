@@ -4,7 +4,7 @@ import { useMsal } from "@/hooks/use-msal"; // Added import for MSAL hook
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import SearchBar from "@/components/search-bar";
-import LoginButton from "@/components/LoginButton";
+
 import {
   Users,
   LayoutDashboard,
@@ -74,7 +74,7 @@ export default function Layout({ children }: LayoutProps) {
           <Button
             variant="ghost"
             className="w-full justify-start"
-            onClick={() => logout({ postLogoutRedirectUri: window.location.origin })} // Added postLogoutRedirectUri
+          onClick={() => logout({ postLogoutRedirectUri: window.location.origin })}
           >
             <LogOut className="h-4 w-4 mr-2" />
             {sidebarOpen && "Logout"}
