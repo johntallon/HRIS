@@ -3,12 +3,14 @@ import { JobRoleService } from "./job-role.service";
 import { EmployeeService } from "./employee.service";
 import { SiteService } from "./site.service";
 import { CompensationService } from "./compensation.service";
+import { UserService } from "./user.service";
 
 export class ServiceFactory {
   private static jobRoleService: JobRoleService;
   private static employeeService: EmployeeService;
   private static siteService: SiteService;
   private static compensationService: CompensationService;
+  private static userService: UserService;
 
   static getJobRoleService() {
     if (!this.jobRoleService) {
@@ -36,6 +38,13 @@ export class ServiceFactory {
       this.compensationService = new CompensationService();
     }
     return this.compensationService;
+  }
+
+  static getUserService() {
+    if (!this.userService) {
+      this.userService = new UserService();
+    }
+    return this.userService;
   }
 
   // Initialize default data
