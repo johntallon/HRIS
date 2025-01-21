@@ -13,9 +13,15 @@ export default function AuthPage() {
   useEffect(() => {
     if (accounts.length > 0) {
       navigate("/");
+      return;
     }
 
+    let isInitialized = false;
+
     const initializeAuth = async () => {
+      if (isInitialized) return;
+      isInitialized = true;
+      
       try {
         await instance.initialize();
         const response = await instance.handleRedirectPromise();
@@ -28,7 +34,11 @@ export default function AuthPage() {
     };
 
     initializeAuth();
-  }, [accounts, navigate, instance]);
+
+    return () => {
+      isInitialized = false;
+    };
+  }, [navigate, instance]);
 
   const handleLogin = async () => {
     try {
