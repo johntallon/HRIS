@@ -15,28 +15,31 @@ export default function AuthPage() {
       navigate("/");
     }
 
-    // Handle the redirect promise when the page loads
-    instance
-      .handleRedirectPromise()
-      .then((response) => {
+    const initializeAuth = async () => {
+      try {
+        await instance.initialize();
+        const response = await instance.handleRedirectPromise();
         if (response) {
           navigate("/");
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Handle Redirect Error:", error);
-      });
+      }
+    };
+
+    initializeAuth();
   }, [accounts, navigate, instance]);
 
-  const handleLogin = () => {
-    instance
-      .loginRedirect({
+  const handleLogin = async () => {
+    try {
+      await instance.initialize();
+      await instance.loginPopup({
         ...loginRequest,
         prompt: "select_account",
-      })
-      .catch((e) => {
-        console.error("Login Redirect Error: ", e);
       });
+    } catch (e) {
+      console.error("Login Error: ", e);
+    }
   };
 
   return (
