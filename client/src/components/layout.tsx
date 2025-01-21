@@ -31,7 +31,9 @@ export default function Layout({ children }: LayoutProps) {
         } bg-sidebar transition-all duration-300 flex flex-col`}
       >
         <div className="p-4 flex justify-between items-center">
-          {sidebarOpen && <h1 className="text-xl font-bold text-sidebar-foreground">HRIS</h1>}
+          {sidebarOpen && (
+            <h1 className="text-xl font-bold text-sidebar-foreground">HRIS</h1>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -43,37 +45,25 @@ export default function Layout({ children }: LayoutProps) {
 
         <nav className="flex-1 px-2 py-4 space-y-2">
           <Link href="/">
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-            >
+            <Button variant="ghost" className="w-full justify-start">
               <LayoutDashboard className="h-4 w-4 mr-2" />
               {sidebarOpen && "Dashboard"}
             </Button>
           </Link>
           <Link href="/employees">
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-            >
+            <Button variant="ghost" className="w-full justify-start">
               <Users className="h-4 w-4 mr-2" />
               {sidebarOpen && "Employees"}
             </Button>
           </Link>
           <Link href="/org-chart">
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-            >
+            <Button variant="ghost" className="w-full justify-start">
               <NetworkIcon className="h-4 w-4 mr-2" />
               {sidebarOpen && "Org Chart"}
             </Button>
           </Link>
           <Link href="/settings">
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-            >
+            <Button variant="ghost" className="w-full justify-start">
               <SettingsIcon className="h-4 w-4 mr-2" />
               {sidebarOpen && "Settings"}
             </Button>
@@ -98,10 +88,10 @@ export default function Layout({ children }: LayoutProps) {
             <SearchBar />
             <div className="flex items-center gap-4">
               <h1 className="text-xl font-semibold">
-                Welcome{user?.name ? `, ${user.name}` : ""}
-                {accounts && accounts[0] && `, ${accounts[0].username}`} {/* Added email display */}
+                Welcome
+                {accounts && accounts[0] && `, ${accounts[0].name}`}{" "}
+     
               </h1>
-              {!user && <LoginButton />}
             </div>
           </div>
         </header>
