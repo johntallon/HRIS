@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useUser } from "@/hooks/use-user";
+import { useMsal } from "@/hooks/use-msal"; // Added import for MSAL hook
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import SearchBar from "@/components/search-bar";
@@ -20,6 +21,7 @@ type LayoutProps = {
 export default function Layout({ children }: LayoutProps) {
   const { user, logout } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { accounts } = useMsal(); // Added to get account information
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -95,7 +97,10 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex justify-between items-center">
             <SearchBar />
             <div className="flex items-center gap-4">
-              <h1 className="text-xl font-semibold">Welcome{user?.name ? `, ${user.name}` : ''}</h1>
+              <h1 className="text-xl font-semibold">
+                Welcome{user?.name ? `, ${user.name}` : ""}
+                {accounts && accounts[0] && `, ${accounts[0].username}`} {/* Added email display */}
+              </h1>
               {!user && <LoginButton />}
             </div>
           </div>
