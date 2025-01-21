@@ -74,7 +74,7 @@ export default function Layout({ children }: LayoutProps) {
           <Button
             variant="ghost"
             className="w-full justify-start"
-            onClick={() => logout()}
+            onClick={() => logout({ postLogoutRedirectUri: window.location.origin })} // Added postLogoutRedirectUri
           >
             <LogOut className="h-4 w-4 mr-2" />
             {sidebarOpen && "Logout"}
@@ -90,7 +90,7 @@ export default function Layout({ children }: LayoutProps) {
               <h1 className="text-xl font-semibold">
                 Welcome
                 {accounts && accounts[0] && `, ${accounts[0].name}`}{" "}
-     
+
               </h1>
             </div>
           </div>
