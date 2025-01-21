@@ -74,7 +74,7 @@ export default function Layout({ children }: LayoutProps) {
           <Button
             variant="ghost"
             className="w-full justify-start"
-          onClick={() => logout({ postLogoutRedirectUri: window.location.origin })}
+          onClick={() => logout()}
           >
             <LogOut className="h-4 w-4 mr-2" />
             {sidebarOpen && "Logout"}
