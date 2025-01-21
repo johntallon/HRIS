@@ -25,6 +25,8 @@ export function registerRoutes(router: Router) {
   const compensationService = ServiceFactory.getCompensationService();
   const jobRoleService = ServiceFactory.getJobRoleService(); // Added JobRoleService
   const siteService = ServiceFactory.getSiteService(); // Added SiteService
+  const userService = ServiceFactory.getUserService(); // Added UserService
+
   // Compensation routes
   router.get("/compensation/:employeeId", async (req, res) => {
     try {
@@ -90,7 +92,7 @@ export function registerRoutes(router: Router) {
 
       res.json({
         ...employees,
-        data: { ...employeesWithJobRoleNames, ...employeesWithSiteNames },
+        data: employeesWithJobRoleNames.map(emp => ({...emp, siteName: employeesWithSiteNames.find(e => e.id === emp.id)?.siteName})),
       });
     } catch (error) {
       console.error("Error fetching employees:", error);
@@ -171,6 +173,20 @@ export function registerRoutes(router: Router) {
   router.get("/api/protected", authenticateToken, (req, res) => {
     res.json({ message: "Protected data", user: req.user });
   });
+
+  // User lookup endpoint
+  router.get("/api/users/lookup/:username", async (req, res) => {
+    try {
+      const user = await userService.findByUsername(req.params.username);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to lookup user" });
+    }
+  });
+
 
   // Health check endpoint
   router.get("/health", (_req, res) => {

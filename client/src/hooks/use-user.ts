@@ -20,6 +20,17 @@ export function useUser() {
         account,
       });
 
+      // First check if user exists
+      const userResponse = await fetch(`/api/users/lookup/${account.username}`, {
+        headers: {
+          'Authorization': `Bearer ${tokenResponse.accessToken}`
+        }
+      });
+
+      if (!userResponse.ok) {
+        throw new Error('Failed to lookup user');
+      }
+
       const response = await fetch('/api/user', {
         headers: {
           'Authorization': `Bearer ${tokenResponse.accessToken}`
