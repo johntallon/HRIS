@@ -10,6 +10,7 @@ export function useUser() {
   const { data: user, error, isLoading } = useQuery<User>({
     queryKey: ['/api/user'],
     queryFn: async () => {
+      await msalInstance.initialize();
       const account = msalInstance.getAllAccounts()[0];
       if (!account) {
         throw new Error('Not authenticated');
@@ -48,6 +49,7 @@ export function useUser() {
 
   const login = async () => {
     try {
+      await msalInstance.initialize();
       await msalInstance.loginPopup(loginRequest);
       queryClient.invalidateQueries({ queryKey: ['/api/user'] });
     } catch (err) {
@@ -60,6 +62,7 @@ export function useUser() {
   };
 
   const logout = async () => {
+    await msalInstance.initialize();
     await msalInstance.logoutPopup();
     queryClient.invalidateQueries({ queryKey: ['/api/user'] });
   };
