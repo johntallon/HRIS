@@ -97,10 +97,13 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex items-center gap-4">
               <h1 className="text-xl font-semibold">Welcome{user?.name ? `, ${user.name}` : ''}</h1>
               {!user && (
-                <Link href="/auth">
-                  <LoginButton />
-                </Link>
-              )}
+                        <Button onClick={handleLogin} className="w-full bg-blue-600 hover:bg-blue-700">
+                  <span className="mr-2">
+                    {/* You can add an Entra ID or Microsoft logo here */}
+                    <svg /* SVG for logo */></svg>
+                  </span>
+                  Login with Entra ID
+                </Button>       )}
             </div>
           </div>
         </header>

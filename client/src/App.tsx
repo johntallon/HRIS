@@ -10,6 +10,7 @@ import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/layout";
 import AuthPage from "@/pages/auth-page";
+import ProtectedRoute from "@/components/ProtectedRoute"; // Import the ProtectedRoute
 
 function Router() {
   return (
@@ -17,12 +18,22 @@ function Router() {
       <Route path="/login" component={AuthPage} />
       <Layout>
         <Switch>
-          <Route path="/" component={Dashboard} />
-        <Route path="/employees" component={EmployeeManagement} />
-        <Route path="/employees/:id" component={EmployeeFormPage} />
-        <Route path="/org-chart" component={OrgChart} />
-        <Route path="/settings" component={Settings} />
-        <Route component={NotFound} />
+          <Route path="/" component={() => (
+            <ProtectedRoute component={Dashboard} />
+          )} />
+          <Route path="/employees" component={() => (
+            <ProtectedRoute component={EmployeeManagement} />
+          )} />
+          <Route path="/employees/:id" component={() => (
+            <ProtectedRoute component={EmployeeFormPage} />
+          )} />
+          <Route path="/org-chart" component={() => (
+            <ProtectedRoute component={OrgChart} />
+          )} />
+          <Route path="/settings" component={() => (
+            <ProtectedRoute component={Settings} />
+          )} />
+          <Route component={NotFound} />
         </Switch>
       </Layout>
     </Switch>

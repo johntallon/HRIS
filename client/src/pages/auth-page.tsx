@@ -1,32 +1,45 @@
+// src/pages/auth-page.tsx
 
-import { useState } from "react";
-import { useUser } from "@/hooks/use-user";
+import React, { useEffect } from "react";
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from "../authConfig";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { useLocation } from "wouter";
 
 export default function AuthPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const { login } = useUser();
+  const { instance, accounts } = useMsal();
+  const [, navigate] = useLocation();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    login();
+  useEffect(() => {
+    if (accounts.length > 0) {
+      // If the user is already logged in, redirect to the home page
+      navigate("/");
+    }
+  }, [accounts, navigate]);
+
+  const handleLogin = () => {
+    instance
+      .loginRedirect(loginRequest)
+      .catch((e) => {
+        console.error("Login Redirect Error: ", e);
+      });
   };
 
   return (
     <div className="min-h-screen flex">
       {/* Video Section */}
       <div className="flex-1 bg-white">
-        <video 
+        <video
           className="w-full h-full object-cover"
-          autoPlay 
-          muted 
+          autoPlay
+          muted
           playsInline
         >
-          <source src="https://www.steripack.com/wp-content/uploads/SteriPack-Cubes.webm" type="video/webm" />
+          <source
+            src="https://www.steripack.com/wp-content/uploads/SteriPack-Cubes.webm"
+            type="video/webm"
+          />
           Your browser does not support the video tag.
         </video>
       </div>
@@ -37,32 +50,11 @@ export default function AuthPage() {
           <CardHeader>
             <CardTitle className="text-center">HR Information System</CardTitle>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                Login
-              </Button>
-            </form>
+          <CardContent className="space-y-4">
+            <p className="text-center">Please log in using your organizational account.</p>
+            <Button onClick={handleLogin} className="w-full">
+              Login with Entra ID
+            </Button>
           </CardContent>
         </Card>
       </div>
