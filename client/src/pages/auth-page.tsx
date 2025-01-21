@@ -1,4 +1,3 @@
-// src/pages/auth-page.tsx
 
 import React, { useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
@@ -13,14 +12,28 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (accounts.length > 0) {
-      // If the user is already logged in, redirect to the home page
       navigate("/");
     }
-  }, [accounts, navigate]);
+
+    // Handle the redirect promise when the page loads
+    instance
+      .handleRedirectPromise()
+      .then((response) => {
+        if (response) {
+          navigate("/");
+        }
+      })
+      .catch((error) => {
+        console.error("Handle Redirect Error:", error);
+      });
+  }, [accounts, navigate, instance]);
 
   const handleLogin = () => {
     instance
-      .loginRedirect(loginRequest)
+      .loginRedirect({
+        ...loginRequest,
+        prompt: "select_account",
+      })
       .catch((e) => {
         console.error("Login Redirect Error: ", e);
       });
@@ -28,14 +41,8 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Video Section */}
       <div className="flex-1 bg-white">
-        <video
-          className="w-full h-full object-cover"
-          autoPlay
-          muted
-          playsInline
-        >
+        <video className="w-full h-full object-cover" autoPlay muted playsInline>
           <source
             src="https://www.steripack.com/wp-content/uploads/SteriPack-Cubes.webm"
             type="video/webm"
@@ -44,14 +51,15 @@ export default function AuthPage() {
         </video>
       </div>
 
-      {/* Login Section */}
       <div className="flex-1 flex items-center justify-center bg-white">
         <Card className="w-full max-w-md mx-8">
           <CardHeader>
             <CardTitle className="text-center">HR Information System</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-center">Please log in using your organizational account.</p>
+            <p className="text-center">
+              Please log in using your organizational account.
+            </p>
             <Button onClick={handleLogin} className="w-full">
               Login with Entra ID
             </Button>
