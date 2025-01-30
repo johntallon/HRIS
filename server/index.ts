@@ -19,8 +19,10 @@ app.use(
         connectSrc: ["'self'", "wss:", "https://login.microsoftonline.com"],
         fontSrc: ["'self'", "https:", "data:"],
         objectSrc: ["'none'"],
-        mediaSrc: ["'self'"],
+        mediaSrc: ["'self'", "https:", "data:", "blob:"],
         frameSrc: ["'self'", "https://login.microsoftonline.com"],
+        frameAncestors: ["'self'"],
+        workerSrc: ["'self'", "blob:"],
       },
     },
     crossOriginEmbedderPolicy: false, // Required for development
