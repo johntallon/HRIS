@@ -16,7 +16,7 @@ const config = {
   responseMode: "form_post",
   redirectUrl:
     process.env.REDIRECT_URI ||
-    "https://4918b87e-126a-48c9-8d43-89a97e602173-00-1tdtxri805v4.worf.replit.dev/api/auth/callback",
+    "http://0.0.0.0:5000/api/auth/callback",
   allowHttpForRedirectUrl: true, // Only for development
   validateIssuer: true,
   issuer: `https://login.microsoftonline.com/90f9f222-ca81-4252-ab4a-a9974c8557b2/v2.0`,
