@@ -42,8 +42,15 @@ type Props = {
 };
 
 export default function EmployeeForm({ employee: initialEmployee }: Props) {
-  const id = initialEmployee?.id || Number(window.location.pathname.split('/').pop());
-  const { createEmployee, updateEmployee, employee: fetchedEmployee, isLoading, employees } = useEmployees(id);
+  const id =
+    initialEmployee?.id || Number(window.location.pathname.split("/").pop());
+  const {
+    createEmployee,
+    updateEmployee,
+    employee: fetchedEmployee,
+    isLoading,
+    employees,
+  } = useEmployees(id);
   const [, setLocation] = useLocation();
 
   const employee = initialEmployee || fetchedEmployee;
@@ -51,40 +58,45 @@ export default function EmployeeForm({ employee: initialEmployee }: Props) {
 
   const form = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeSchema),
-    defaultValues: employee ? {
-      name: employee.name,
-      employeeId: employee.employeeId,
-      jobRoleId: employee.jobRoleId || 0,
-      department: employee.department,
-      siteId: employee.siteId || 0,
-      isUser: employee.isUser,
-      managerId: employee.managerId,
-      avatar: employee.avatar || '/Images/avatar.png',
-    } : {
-      name: "",
-      employeeId: "",
-      jobRoleId: 0,
-      department: "",
-      siteId: 0,
-      isUser: true,
-      managerId: null,
-      avatar: '/Images/avatar.png',
-    }
+    defaultValues: employee
+      ? {
+          name: employee.name,
+          employeeId: employee.employeeId,
+          jobRoleId: employee.jobRoleId || 0,
+          department: employee.department,
+          siteId: employee.siteId || 0,
+          isUser: employee.isUser,
+          managerId: employee.managerId,
+          avatar: employee.avatar || "/Images/avatar.png",
+        }
+      : {
+          name: "",
+          employeeId: "",
+          jobRoleId: 0,
+          department: "",
+          siteId: 0,
+          isUser: true,
+          managerId: null,
+          avatar: "/Images/avatar.png",
+        },
   });
 
   useEffect(() => {
     if (employee && !form.formState.isDirty) {
-      form.reset({
-        name: employee.name,
-        employeeId: employee.employeeId,
-        jobRoleId: employee.jobRoleId || 0,
-        department: employee.department,
-        siteId: employee.siteId || 0,
-        isUser: employee.isUser,
-        managerId: employee.managerId,
-      }, {
-        keepDefaultValues: true
-      });
+      form.reset(
+        {
+          name: employee.name,
+          employeeId: employee.employeeId,
+          jobRoleId: employee.jobRoleId || 0,
+          department: employee.department,
+          siteId: employee.siteId || 0,
+          isUser: employee.isUser,
+          managerId: employee.managerId,
+        },
+        {
+          keepDefaultValues: true,
+        },
+      );
     }
   }, [employee, form]);
 
@@ -97,16 +109,15 @@ export default function EmployeeForm({ employee: initialEmployee }: Props) {
       }
       setLocation("/employees");
     } catch (error) {
-      console.error('Failed to save employee:', error);
+      console.error("Failed to save employee:", error);
     }
   };
 
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">
-          {isEditMode ? 'Edit Employee' : 'Add Employee'}
-        </h1>
+        <h1 className="text-2xl font-bold"> </h1>
+        <Button type="submit">{isEditMode ? "Save" : "Create"}</Button>
         <Button variant="outline" onClick={() => setLocation("/employees")}>
           Back to List
         </Button>
@@ -160,7 +171,10 @@ export default function EmployeeForm({ employee: initialEmployee }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Job Role</FormLabel>
-                    <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
+                    <Select
+                      onValueChange={(value) => field.onChange(Number(value))}
+                      value={field.value?.toString()}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a job role" />
@@ -201,7 +215,10 @@ export default function EmployeeForm({ employee: initialEmployee }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Site</FormLabel>
-                    <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
+                    <Select
+                      onValueChange={(value) => field.onChange(Number(value))}
+                      value={field.value?.toString()}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a site" />
@@ -219,45 +236,53 @@ export default function EmployeeForm({ employee: initialEmployee }: Props) {
                 )}
               />
 
-      <FormField
-        control={form.control}
-        name="managerId"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Manager</FormLabel>
-            <Select onValueChange={(value) => field.onChange(value === 'none' ? null : Number(value))} value={field.value?.toString() || 'none'}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a manager" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="none">No Manager</SelectItem>
-                {employees?.filter(e => e.id !== id).map((manager) => (
-                  <SelectItem key={manager.id} value={manager.id.toString()}>
-                    {manager.name} - {manager.jobRole}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+              <FormField
+                control={form.control}
+                name="managerId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Manager</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(value === "none" ? null : Number(value))
+                      }
+                      value={field.value?.toString() || "none"}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a manager" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">No Manager</SelectItem>
+                        {employees
+                          ?.filter((e) => e.id !== id)
+                          .map((manager) => (
+                            <SelectItem
+                              key={manager.id}
+                              value={manager.id.toString()}
+                            >
+                              {manager.name} - {manager.jobRole}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 
           <div className="flex justify-end space-x-2">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => setLocation("/employees")}
             >
               Cancel
             </Button>
-            <Button type="submit">
-              {isEditMode ? 'Update Employee' : 'Create Employee'}
-            </Button>
+            <Button type="submit">{isEditMode ? "Save" : "Create"}</Button>
           </div>
         </form>
       </Form>
