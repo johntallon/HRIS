@@ -1,4 +1,3 @@
-
 import passport from "passport";
 import { BearerStrategy } from "passport-azure-ad";
 import session from "express-session";
@@ -14,6 +13,7 @@ const config = {
   validateIssuer: true,
   issuer: `https://login.microsoftonline.com/90f9f222-ca81-4252-ab4a-a9974c8557b2/v2.0`,
   passReqToCallback: false,
+  redirectUrl: process.env.REDIRECT_URI || 'http://localhost:5000/api/auth/callback',
   audience: '1b1ffb5b-8849-45d7-98c0-630b7d83c647',
 };
 
@@ -25,26 +25,44 @@ export function setupAuth(app: Express) {
     resave: false,
     saveUninitialized: false,
     store: new MemoryStore({ checkPeriod: 86400000 }),
-    cookie: { secure: process.env.NODE_ENV === "production" }
+    cookie: { 
+      secure: process.env.NODE_ENV === "production",
+      sameSite: 'lax'
+    }
   }));
 
   app.use(passport.initialize());
   app.use(passport.session());
 
-  passport.use(new BearerStrategy(config, async (token: any, done: any) => {
+  // Add login route
+  app.get('/api/auth/login', 
+    passport.authenticate('azure-ad-oauth2', {
+      scope: ['profile', 'email']
+    })
+  );
+
+  // Add callback route
+  app.get('/api/auth/callback',
+    passport.authenticate('azure-ad-oauth2', { 
+      failureRedirect: '/login',
+      successRedirect: '/'
+    })
+  );
+
+  passport.use('azure-ad-oauth2', new BearerStrategy(config, async (token: any, done: any) => {
     try {
       const [user] = await db
         .select()
         .from(users)
-        .where(eq(users.entraId, profile.oid))
+        .where(eq(users.entraId, token.oid))
         .limit(1);
 
       if (!user) {
         const [newUser] = await db
           .insert(users)
           .values({
-            username: profile.preferred_username || profile.upn,
-            entraId: profile.oid,
+            username: token.preferred_username || token.upn,
+            entraId: token.oid,
             role: "Employee",
             password: ""
           })
