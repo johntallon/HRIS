@@ -1,45 +1,10 @@
-
-import React, { useEffect } from "react";
-import { useMsal } from "@azure/msal-react";
-import { loginRequest } from "../authConfig";
-import { Button } from "@/components/ui/button";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
 
 export default function AuthPage() {
-  const { instance, accounts } = useMsal();
-  const [, navigate] = useLocation();
-
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        if (!instance.initialized) {
-          await instance.initialize();
-          const response = await instance.handleRedirectPromise();
-          if (response || accounts.length > 0) {
-            navigate("/");
-          }
-        } else if (accounts.length > 0) {
-          navigate("/");
-        }
-      } catch (error) {
-        console.error("Handle Redirect Error:", error);
-      }
-    };
-
-    initializeAuth();
-  }, [instance, accounts, navigate]);
-
-  const handleLogin = async () => {
-    try {
-      await instance.initialize();
-      await instance.loginPopup({
-        ...loginRequest,
-        prompt: "select_account",
-      });
-    } catch (e) {
-      console.error("Login Error: ", e);
-    }
+  const handleLogin = () => {
+    window.location.href = '/api/auth/login';
   };
 
   return (

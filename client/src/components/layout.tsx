@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useUser } from "@/hooks/use-user";
-import { useMsal } from "@/hooks/use-msal"; // Added import for MSAL hook
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import SearchBar from "@/components/search-bar";
@@ -21,7 +20,6 @@ type LayoutProps = {
 export default function Layout({ children }: LayoutProps) {
   const { user, logout } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { accounts } = useMsal(); // Added to get account information
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -74,7 +72,7 @@ export default function Layout({ children }: LayoutProps) {
           <Button
             variant="ghost"
             className="w-full justify-start"
-          onClick={() => logout()}
+            onClick={() => logout()}
           >
             <LogOut className="h-4 w-4 mr-2" />
             {sidebarOpen && "Logout"}
@@ -88,9 +86,7 @@ export default function Layout({ children }: LayoutProps) {
             <SearchBar />
             <div className="flex items-center gap-4">
               <h1 className="text-xl font-semibold">
-                Welcome
-                {accounts && accounts[0] && `, ${accounts[0].name}`}{" "}
-
+                Welcome{user ? `, ${user.username}` : ""}
               </h1>
             </div>
           </div>

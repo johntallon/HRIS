@@ -1,7 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@db/schema";
-import { msalInstance, loginRequest } from "@/lib/auth";
 
 export function useUser() {
   const { toast } = useToast();
@@ -14,38 +13,14 @@ export function useUser() {
   } = useQuery<User>({
     queryKey: ["/api/user"],
     queryFn: async () => {
-      await msalInstance.initialize();
-      const account = msalInstance.getAllAccounts()[0];
-      if (!account) {
-        throw new Error("Not authenticated");
-      }
-
-      const tokenResponse = await msalInstance.acquireTokenSilent({
-        ...loginRequest,
-        account,
-      });
-
-      // First check if user exists
-      const userResponse = await fetch(
-        `/api/users/lookup/${account.username}`,
-        {
-          headers: {
-            Authorization: `Bearer ${tokenResponse.accessToken}`,
-          },
-        },
-      );
-
-      if (!userResponse.ok) {
-        throw new Error("Failed to lookup user");
-      }
-
       const response = await fetch("/api/user", {
-        headers: {
-          Authorization: `Bearer ${tokenResponse.accessToken}`,
-        },
+        credentials: "include",
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          return null;
+        }
         throw new Error("Failed to fetch user");
       }
 
@@ -54,24 +29,30 @@ export function useUser() {
     retry: false,
   });
 
-  const login = async () => {
-    try {
-      await msalInstance.initialize();
-      await msalInstance.loginRedirect(loginRequest);
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-    } catch (err) {
-      toast({
-        title: "Login failed",
-        description: "Failed to login with Azure AD",
-        variant: "destructive",
-      });
-    }
+  const login = () => {
+    window.location.href = '/api/auth/login';
   };
 
   const logout = async () => {
-    await msalInstance.initialize();
-    await msalInstance.logoutRedirect();
-    queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+    try {
+      const response = await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Logout failed');
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      window.location.href = '/login';
+    } catch (err) {
+      toast({
+        title: "Logout failed",
+        description: "Failed to logout",
+        variant: "destructive",
+      });
+    }
   };
 
   return {
