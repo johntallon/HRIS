@@ -12,7 +12,7 @@ const config = {
   clientID: "1b1ffb5b-8849-45d7-98c0-630b7d83c647",
   clientSecret:
     process.env.AZURE_CLIENT_SECRET || "RGf8QJrxeSJualJdmG7v2LN3~PuOLIujbt1dmC",
-  responseType: "code id_token",
+  responseType: "code",
   responseMode: "form_post",
   redirectUrl:
     process.env.REDIRECT_URI ||
